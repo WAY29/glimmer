@@ -6,7 +6,7 @@ class Plugin(PluginParserBase):
     protocols = ["http", "https"]
 
     def rule_check(self, module_path):
-        return is_valid_url(module_path) and self.protocol_check(module_path)
+        return self.protocol_check(module_path) and is_valid_url(self.remove_protocol(module_path))
 
     def get_data(self, module_path):
         try:

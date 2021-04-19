@@ -22,14 +22,14 @@ def load_string_to_module(code_string, fullname=None):
         spec.loader.exec_module(mod)
         return mod
     except ImportError as exc:
-        raise ModuleLoadExceptions.Base() from exc
+        raise ModuleLoadExceptions.Base(exc) from exc
 
 
 def load_module(module_path: str, fullname=None, verify_func=None):
     fullname = fullname if fullname else module_path
     data = parse_path(module_path)
     if not data:
-        raise ModuleLoadExceptions.Base()
+        raise ModuleLoadExceptions.Base("parse data error / no data")
     module = load_string_to_module(data, fullname)
     if callable(verify_func):
         verify_func(module)
