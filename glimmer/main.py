@@ -3,10 +3,13 @@ from os import path
 import click
 
 from libs.controller import init, load_plugins, load_pocs, load_targets, start, load_config, end, init_plugins, end_plugins
-from utils import banner
+from libs.core.config import POCS
+from utils import banner, cprint
+from utils.printer import header
 
 
-@click.command()
+@click.group(invoke_without_command=True)
+@click.pass_context
 @click.option("--url", "-u", type=str, multiple=True, help="Load targets from {parser}.")
 @click.option("--file", "-f", type=str, multiple=True, help="Load targets from file and use {parser}.")
 @click.option("--poc", "-p", multiple=True, help="Load poc from {parser}.")
@@ -17,26 +20,40 @@ from utils import banner
 @click.option("--config", "-c", type=str, help="Load config from a configuration toml file.")
 @click.option("--verbose", "-v", count=True, help="display verbose information.")
 @click.option("-vv", count=True, help="display more verbose information.")
-def main(verbose: bool = False, vv: bool = False, threads: int = 10, config: str = "", url: str = "", file: str = "", poc=[], pocs_path: str = "", out=[], plugins_path: str = ""):
-    # load targets from url or file
+@click.option("--debug", count=True, help="setup debug mode.")
+def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str = "", url: str = "", file: str = "", poc=[], pocs_path: str = "", out=[], plugins_path: str = "", debug: int = 0):
+    run_in_main = not ctx.invoked_subcommand
     root_path = path.dirname(path.realpath(__file__))
-    banner()
-    init(root_path, verbose, vv)
 
+    if run_in_main:
+        banner()
+
+    init(root_path, verbose, vv, debug)
     load_config(config)
     load_plugins(plugins_path)
-    load_targets(url, file)
     load_pocs(pocs_path, poc)
 
-    init_plugins()
+    if run_in_main:
+        try:
+            init_plugins()
+            load_targets(url, file)
+            start(threads, out)
+        finally:
+            end_plugins()
+            end()
 
-    try:
-        start(threads, out)
-    finally:
-        end_plugins()
-        end()
     ...
 
+
+@main.command()
+@click.argument("pocs", nargs=-1)
+def show_poc_info(pocs):
+    for poc_name in pocs:
+        if poc_name in POCS.instances:
+            poc = POCS.instances[poc_name]
+            poc.show_info()
+        else:
+            cprint(header("", "-", "can't find %s" % poc_name))
 
 if __name__ == "__main__":
     main()

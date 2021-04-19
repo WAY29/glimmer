@@ -15,7 +15,11 @@ def header(typ: str = "Base", sign: str = "", msg: str = "") -> str:
         sign = " [cyan][*][/cyan]"
     else:
         sign = ""
-    return "[cyan][%s][/cyan]%s %s" % (typ, sign, msg)
+    if typ:
+        typ = "[cyan][%s][/cyan]" % typ
+    else:
+        sign = sign.strip()
+    return "%s%s %s" % (typ, sign, msg)
 
 
 __all__ = ["CONSOLE", "cprint", "header"]
