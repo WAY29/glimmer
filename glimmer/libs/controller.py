@@ -7,9 +7,10 @@ from time import strftime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from click import UsageError
-from libs.core.parser import parse_path
+from rich.progress import Progress, TransferSpeedColumn, SpinnerColumn, BarColumn
 
-from utils import cprint, header
+from libs.core.parser import parse_path
+from utils import cprint, header, CONSOLE
 from libs.request import patch_request
 from libs.logger import init_logger, logger
 from libs.core.loader import load_module
@@ -70,11 +71,14 @@ def _work(tasks_queue):
 
 
 def _run(threads, tasks_queue, results, timeout, output_handlers):
-    with ThreadPoolExecutor(threads) as pool:
-        # create tasks
+    with ThreadPoolExecutor(threads) as pool, Progress(SpinnerColumn(), "{task.description}", BarColumn(), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
+        # create bar_task
+        bar_task = bar.add_task("[cyan]testing", total=tasks_queue.qsize())
+        # create futures
         futures = [pool.submit(_work, tasks_queue) for _ in range(threads)]
         # get result as completed
         for future in as_completed(futures, timeout):
+            bar.update(bar_task, advance=1)
             target, poc, poc_result = future.result()
             if target and poc and poc_result:
                 status = poc_result.get("status", -1)
