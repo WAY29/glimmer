@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 url.txt
 config.ini
+glimmer.egg-info/
+.vscode/
