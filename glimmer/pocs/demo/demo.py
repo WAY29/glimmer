@@ -10,8 +10,8 @@ class Poc(PocBase):
     authors = ['Longlone']
     references = [""]
     name = "demo"
-    appName = ""
-    appVersion = ""
+    appName = "Unknown"
+    appVersion = "1.0-2.0"
 
     def check(self, url, **kwargs):
         res = requests.get(url)
