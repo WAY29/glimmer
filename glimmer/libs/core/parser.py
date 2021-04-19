@@ -14,4 +14,5 @@ def parse_path(path, excludes=()):
                 return parser.get_data(path)
             except Exception as e:
                 raise ParserExceptions.Base() from e
-    return ""
+        else:
+            return path

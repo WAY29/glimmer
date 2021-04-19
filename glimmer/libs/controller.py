@@ -7,7 +7,7 @@ from time import strftime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from click import UsageError
-from rich.progress import Progress, TransferSpeedColumn, SpinnerColumn, BarColumn
+from rich.progress import Progress, SpinnerColumn, BarColumn
 
 from libs.core.parser import parse_path
 from utils import cprint, header, CONSOLE
@@ -104,6 +104,21 @@ def _output(output_handlers, poc, poc_result):
         handler(poc, poc_result)
 
 
+def _load_and_parse_from_links_and_files(links, files, excludes=()):
+    results = []
+    if links:  # load from links
+        results.extend(links)
+    if files:  # load from files
+        for file in files:
+            if not path.isfile(file):
+                raise UsageError("non-existent path: %s" % file)
+            with open(file, "r") as f:
+                results.extend([line.strip()
+                               for line in f.readlines() if line])
+    results = [parse_path(target, excludes) for target in results]
+    return results
+
+
 def load_config(config_path):
     if config_path and path.isfile(config_path):
         logger.info("load_config: load configuration from file")
@@ -118,32 +133,27 @@ def load_config(config_path):
 def load_targets(urls, files):
     if not any((urls, files)):
         raise UsageError("option url/file is required")
-    targets = []
-    if urls:  # load from urls
-        targets.extend(urls)
-    if files:  # load from files
-        for file in files:
-            if not path.isfile(file):
-                raise UsageError("non-existent path: %s" % file)
-            with open(file, "r") as f:
-                targets.extend([line.strip()
-                               for line in f.readlines() if line])
-    targets = [parse_path(target, ("parser.url",)) for target in targets]
+    targets = _load_and_parse_from_links_and_files(
+        urls, files, ("parser.url",))
     CONFIG.base.targets = targets
     for target in targets:
         logger.info(header("Load target", "*", target), extra={"markup": True})
 
 
-def load_pocs(pocs_path="", pocs=[]):
+def load_pocs(pocs=[], poc_files=[], pocs_path=""):
     pocs_path = Path(CONFIG.base.root_path /
                      "pocs") if not pocs_path else Path(pocs_path)
     debug_msg = ""
     msg = ""
     instances = POCS.instances
     count_dict = {}
-    if not pocs:
+    if not pocs and not poc_files:
         pocs = [poc for poc in glob(str(pocs_path / "**" / "*.py"))]
+    else:
+        pocs = _load_and_parse_from_links_and_files(pocs, poc_files)
     for poc in pocs:
+        if not poc:
+            continue
         poc_path = poc
         fname = poc
         logger_func = logger.info
@@ -247,7 +257,8 @@ def init_plugins():
 
 
 def init_output_plugins(outs):
-    output_handlers = [instance.handle for plg_name, instance in PLUGINS.output.items() if plg_name in outs]
+    output_handlers = [instance.handle for plg_name,
+                       instance in PLUGINS.output.items() if plg_name in outs]
     PLUGINS.output_handlers = output_handlers
 
 
