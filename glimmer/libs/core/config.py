@@ -6,7 +6,7 @@ CONFIG
     - root_path ""
     - targets []
     - request {}
-    - config Class
+    - config ConfigHandler
     option:
     - verbose 0
     - very_verbose 0
