@@ -30,7 +30,7 @@ def _verify_poc(module):
             "non-existent method: Poc.check")
 
 
-def _set_config(root_path, verbose, very_verbose):
+def _set_config(root_path, verbose, very_verbose, debug):
     # set root_path
     logger.info("_set_config: set root_path")
     sys_path.insert(0, root_path)
@@ -39,6 +39,7 @@ def _set_config(root_path, verbose, very_verbose):
     logger.info("_set_config: set verbose flag")
     CONFIG.option.verbose = verbose
     CONFIG.option.very_verbose = very_verbose
+    CONFIG.option.debug = debug
     ...
 
 
@@ -73,12 +74,16 @@ def _work(tasks_queue):
 def _run(threads, tasks_queue, results, timeout, output_handlers):
     with ThreadPoolExecutor(threads) as pool, Progress(SpinnerColumn(), "{task.description}", BarColumn(), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
         # create bar_task
-        bar_task = bar.add_task("[cyan]testing", total=tasks_queue.qsize())
+        if not CONFIG.option.debug:
+            bar_task = bar.add_task("[cyan]testing", total=tasks_queue.qsize())
         # create futures
         futures = [pool.submit(_work, tasks_queue) for _ in range(threads)]
         # get result as completed
         for future in as_completed(futures, timeout):
-            bar.update(bar_task, advance=1)
+            # update bar
+            if not CONFIG.option.debug:
+                bar.update(bar_task, advance=1)
+
             target, poc, poc_result = future.result()
             if target and poc and poc_result:
                 status = poc_result.get("status", -1)
@@ -256,7 +261,7 @@ def end_plugins():
 def init(root_path, verbose, very_verbose, debug):
     init_logger(debug)
 
-    _set_config(root_path, verbose, very_verbose)
+    _set_config(root_path, verbose, very_verbose, debug)
 
     patch_request()
 
