@@ -2,7 +2,7 @@ from os import path
 
 import click
 
-from libs.controller import init, load_plugins, load_pocs, load_targets, start, load_config, end, init_plugins, end_plugins
+from libs.controller import init, init_output_plugins, load_plugins, load_pocs, load_targets, start, load_config, end, init_plugins, enable_plugins, end_plugins
 from libs.core.config import POCS
 from utils import banner, cprint
 from utils.printer import header
@@ -40,10 +40,12 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
     load_pocs(pocs_path, poc)
 
     if run_in_main:
+        enable_plugins(out)
         try:
             init_plugins()
+            init_output_plugins(out)
             load_targets(url, file)
-            start(threads, out)
+            start(threads)
         finally:
             end_plugins()
             end()

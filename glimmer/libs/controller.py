@@ -217,16 +217,36 @@ def load_plugins(plugins_path):
         cprint(msg)
 
 
+def enable_plugins(outs, *args):
+    enable_plugins_name = []
+    outs = ["output/%s" % out for out in outs]
+    enable_plugins_name.extend(outs)
+    if args:
+        for arg in args:
+            if isinstance(arg, (tuple, list)):
+                enable_plugins_name.extend(arg)
+            else:
+                enable_plugins_name.append(arg)
+    PLUGINS.enable_plugins_name = enable_plugins_name
+
+
 def init_plugins():
     logger.info("init_plugins: construct plugins")
-    for plg in PLUGINS.instances.values():
-        plg.construct()
+    for plg_name, plg in PLUGINS.instances.items():
+        if plg_name in PLUGINS.enable_plugins_name:
+            plg.construct()
+
+
+def init_output_plugins(outs):
+    output_handlers = [instance.handle for plg_name, instance in PLUGINS.output.items() if plg_name in outs]
+    PLUGINS.output_handlers = output_handlers
 
 
 def end_plugins():
     logger.info("end_plugins: destruct plugins")
-    for plg in PLUGINS.instances.values():
-        plg.destruct()
+    for plg_name, plg in PLUGINS.instances.items():
+        if plg_name in PLUGINS.enable_plugins_name:
+            plg.destruct()
 
 
 def init(root_path, verbose, very_verbose, debug):
@@ -239,19 +259,17 @@ def init(root_path, verbose, very_verbose, debug):
     ...
 
 
-def start(threads, outs, timeout=300):
+def start(threads, timeout=300):
     logger.info("start: start program")
     targets = CONFIG.base.targets
     tasks_queue = Queue()
     results = {}
     pocs = [poc for poc in POCS.instances.values()]
-    output_handlers = [instance.handle for instance in PLUGINS.output.values(
-    ) if any("output.%s" % out in str(instance) for out in outs)]
     for target in targets:
         results[target] = {}
         for poc in pocs:
             tasks_queue.put((target, poc))
-    return _run(threads, tasks_queue, results, timeout, output_handlers)
+    return _run(threads, tasks_queue, results, timeout, PLUGINS.output_handlers)
 
 
 def end():

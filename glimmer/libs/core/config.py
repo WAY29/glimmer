@@ -15,6 +15,8 @@ PLUGINS
     debug_messages ""
     messages ""
     instances {}
+    enable_plugins_name ""
+    output_handlers []
     type:
         module
 
