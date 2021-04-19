@@ -112,7 +112,7 @@ def load_targets(urls, files):
 
 def load_pocs(pocs_path="", pocs=[]):
     pocs_path = Path(CONFIG.base.root_path /
-                     "pocs") if not pocs_path else pocs_path
+                     "pocs") if not pocs_path else Path(pocs_path)
     debug_msg = ""
     msg = ""
     instances = POCS.instances
@@ -161,7 +161,7 @@ def load_pocs(pocs_path="", pocs=[]):
 def load_plugins(plugins_path):
     from importlib import import_module
     plugins_path = Path(CONFIG.base.root_path /
-                        "plugins") if not plugins_path else plugins_path
+                        "plugins") if not plugins_path else Path(plugins_path)
     msg = ""
     debug_msg = ""
     count_dict = {}
