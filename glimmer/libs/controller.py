@@ -12,7 +12,7 @@ from libs.core.parser import parse_path
 from utils import cprint, header
 from libs.request import patch_request
 from libs.core.loader import load_module
-from libs.core.config import AttribDict, CONFIG, PLUGINS, POCS, ConfigHandler
+from libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
 from libs.core.exceptions import ModuleLoadExceptions
 
 
