@@ -1,0 +1,17 @@
+Metadata-Version: 1.2
+Name: glimmer
+Version: 1.0.0
+Summary: UNKNOWN
+Home-page: UNKNOWN
+Author: 
+Author-email: WAY29 <1162410187@qq.com>
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Requires-Python: >=3.6
