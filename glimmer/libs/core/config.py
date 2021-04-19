@@ -100,7 +100,7 @@ CONFIG.base = AttribDict()
 CONFIG.option = AttribDict()
 
 POCS = AttribDict()
-POCS.modules = AttribDict()
+POCS.instances = AttribDict()
 
 PLUGINS = AttribDict()
 PLUGINS.instances = AttribDict()

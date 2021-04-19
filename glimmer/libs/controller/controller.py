@@ -115,7 +115,7 @@ def load_pocs(pocs_path="", pocs=[]):
                      "pocs") if not pocs_path else pocs_path
     debug_msg = ""
     msg = ""
-    modules = AttribDict()
+    instances = POCS.instances
     count_dict = {}
     if not pocs:
         pocs = [poc for poc in glob(str(pocs_path / "**" / "*.py"))]
@@ -142,7 +142,7 @@ def load_pocs(pocs_path="", pocs=[]):
             if poc_type_dir not in count_dict:
                 count_dict[poc_type_dir] = 0
             count_dict[poc_type_dir] += 1
-            modules[fname] = module
+            instances[fname] = module.Poc()
         else:
             msg += load_msg
         debug_msg += load_msg
@@ -151,7 +151,7 @@ def load_pocs(pocs_path="", pocs=[]):
                     "Loaded [%d] pocs" % v) for k, v in count_dict.items()) + msg + "\n"
     POCS.messages = msg
     POCS.debug_messages = debug_msg
-    POCS.modules = modules
+
     if CONFIG.option.get("very_verbose", False):
         cprint(debug_msg)
     elif CONFIG.option.get("verbose", False):
@@ -215,7 +215,7 @@ def start(threads, outs, timeout=300):
     targets = CONFIG.base.targets
     tasks_queue = Queue()
     results = {}
-    pocs = [poc.Poc() for poc in POCS.modules.values() if poc]
+    pocs = [poc for poc in POCS.instances.values()]
     output_handlers = [instance.handle for instance in PLUGINS.output.values(
     ) if any("output.%s" % out in str(instance) for out in outs)]
     for target in targets:
