@@ -11,6 +11,7 @@ from libs.core.parser import parse_path
 
 from utils import cprint, header
 from libs.request import patch_request
+from libs.logger import init_logger, logger
 from libs.core.loader import load_module
 from libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
 from libs.core.exceptions import ModuleLoadExceptions
@@ -30,9 +31,11 @@ def _verify_poc(module):
 
 def _set_config(root_path, verbose, very_verbose):
     # set root_path
+    logger.info("_set_config: set root_path")
     sys_path.insert(0, root_path)
     CONFIG.base.root_path = Path(root_path)
     # set verbose flag
+    logger.info("_set_config: set verbose flag")
     CONFIG.option.verbose = verbose
     CONFIG.option.very_verbose = very_verbose
     ...
@@ -59,7 +62,7 @@ def _work(tasks_queue):
         except Exception as err:
             res = {"url": "",
                    "status": -1,
-                   "msg": "work error: " + err,
+                   "msg": "work error: " + str(err),
                    "extra": {}
                    }
         return target, poc, res
@@ -74,6 +77,13 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
         for future in as_completed(futures, timeout):
             target, poc, poc_result = future.result()
             if target and poc and poc_result:
+                status = poc_result.get("status", -1)
+                if status == 0:
+                    logger_func = logger.info
+                else:
+                    logger_func = logger.error
+                logger_func("_run: done poc: %s" % poc.name)
+
                 results[target][poc.name] = poc_result
                 # handle result
                 _output(output_handlers, poc, poc_result)
@@ -86,11 +96,14 @@ def _output(output_handlers, poc, poc_result):
 
 
 def load_config(config_path):
-    if config_path:
+    if config_path and path.isfile(config_path):
+        logger.info("load_config: load configuration from file")
         config = ConfigHandler(config_path)
         CONFIG.base.config = config
         request_config = config.get("request")
         CONFIG.base.request = request_config
+    else:
+        logger.warning("load_config: config_path [%s] not found" % config_path)
 
 
 def load_targets(urls, files):
@@ -108,6 +121,8 @@ def load_targets(urls, files):
                                for line in f.readlines() if line])
     targets = [parse_path(target, ("parser.url",)) for target in targets]
     CONFIG.base.targets = targets
+    for target in targets:
+        logger.info(header("Load target", "*", target), extra={"markup": True})
 
 
 def load_pocs(pocs_path="", pocs=[]):
@@ -122,6 +137,7 @@ def load_pocs(pocs_path="", pocs=[]):
     for poc in pocs:
         poc_path = poc
         fname = poc
+        logger_func = logger.info
         if "://" not in poc:  # choose a poc from poc dir
             poc_path = str(pocs_path / poc)
             if not poc_path.endswith(".py"):
@@ -145,7 +161,10 @@ def load_pocs(pocs_path="", pocs=[]):
             instances[fname] = module.Poc()
         else:
             msg += load_msg
+            logger_func = logger.error
         debug_msg += load_msg
+
+        logger_func(load_msg, extra={"markup": True})
 
     msg = "\n".join(header("Load %s poc" % k, "+",
                     "Loaded [%d] pocs" % v) for k, v in count_dict.items()) + msg + "\n"
@@ -172,16 +191,21 @@ def load_plugins(plugins_path):
         plugin_type_dir = path.basename(path.dirname(f))
         try:
             import_module("plugins.%s.%s" % (plugin_type_dir, fname))
-            debug_msg += header("Load plugin", "+", "load plugin %s.%s \n" %
-                                (plugin_type_dir, fname))
+            temp_msg = header("Load plugin", "+", "load plugin %s.%s \n" %
+                              (plugin_type_dir, fname))
+            debug_msg += temp_msg
             if plugin_type_dir not in count_dict:
                 count_dict[plugin_type_dir] = 0
             count_dict[plugin_type_dir] += 1
+
+            logger.info(temp_msg, extra={"markup": True})
         except ImportError as e:
             temp_msg = header("Load plugin", "-", "load plugin %s.%s error: " %
                               (plugin_type_dir, fname) + str(e) + "\n")
             debug_msg += temp_msg
             msg += temp_msg
+
+            logger.error(temp_msg, extra={"markup": True})
 
     msg = "\n".join(header("Load %s plugin" % k, "+",
                     "Loaded [%d] plugins" % v) for k, v in count_dict.items()) + msg + "\n"
@@ -194,16 +218,20 @@ def load_plugins(plugins_path):
 
 
 def init_plugins():
+    logger.info("init_plugins: construct plugins")
     for plg in PLUGINS.instances.values():
         plg.construct()
 
 
 def end_plugins():
+    logger.info("end_plugins: destruct plugins")
     for plg in PLUGINS.instances.values():
         plg.destruct()
 
 
-def init(root_path, verbose, very_verbose):
+def init(root_path, verbose, very_verbose, debug):
+    init_logger(debug)
+
     _set_config(root_path, verbose, very_verbose)
 
     patch_request()
@@ -212,6 +240,7 @@ def init(root_path, verbose, very_verbose):
 
 
 def start(threads, outs, timeout=300):
+    logger.info("start: start program")
     targets = CONFIG.base.targets
     tasks_queue = Queue()
     results = {}

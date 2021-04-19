@@ -7,6 +7,8 @@ from requests.sessions import merge_setting, merge_cookies
 from requests.cookies import RequestsCookieJar
 from requests.utils import get_encodings_from_content
 
+import logging
+from libs.logger import logger
 from libs.core.config import CONFIG
 
 
@@ -60,15 +62,25 @@ def session_request(self, method, url,
     return resp
 
 
-def patch_session():
+def _patch_session():
     Session.request = session_request
 
 
-def remove_ssl_verify():
+def _remove_ssl_verify():
     ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def patch_request():
+def _upgrade_urllib3_logger_level():
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+
+def _disable_warnings():
     disable_warnings()
-    remove_ssl_verify()
-    patch_session()
+
+
+def patch_request():
+    logger.info("patch_requests: patch something about requests")
+    _disable_warnings()
+    _remove_ssl_verify()
+    _upgrade_urllib3_logger_level()
+    _patch_session()

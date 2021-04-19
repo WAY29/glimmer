@@ -17,3 +17,11 @@ class ModuleLoadExceptions:
 class ParserExceptions:
     class Base(Exception):
         pass
+
+
+class LoggerExceptions:
+    class Base(Exception):
+        pass
+
+    class NotInitError(Base):
+        pass
