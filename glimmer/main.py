@@ -18,10 +18,11 @@ from utils.printer import header
 @click.option("--plugins_path", help="User custom output plugin dir.")
 @click.option("--threads", type=int, default=10)
 @click.option("--config", "-c", type=str, help="Load config from a configuration toml file.")
+@click.option("--time", "-t", default=300, help="Max program runtime.")
 @click.option("--verbose", "-v", count=True, help="display verbose information.")
 @click.option("-vv", count=True, help="display more verbose information.")
 @click.option("--debug", count=True, help="setup debug mode.")
-def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str = "", url: str = "", file: str = "", poc=[], pocs_path: str = "", out=[], plugins_path: str = "", debug: int = 0):
+def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str = "", url: str = "", file: str = "", poc=[], pocs_path: str = "", out=[], plugins_path: str = "", debug: int = 0, timeout: int = 300):
     """
     A poc framework base on python.
 
@@ -45,7 +46,7 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
             init_plugins()
             init_output_plugins(out)
             load_targets(url, file)
-            start(threads)
+            start(threads, timeout)
         finally:
             end_plugins()
             end()

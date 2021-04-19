@@ -259,7 +259,7 @@ def init(root_path, verbose, very_verbose, debug):
     ...
 
 
-def start(threads, timeout=300):
+def start(threads, timeout):
     logger.info("start: start program")
     targets = CONFIG.base.targets
     tasks_queue = Queue()
