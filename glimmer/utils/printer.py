@@ -10,7 +10,7 @@ def header(typ: str = "Base", sign: str = "", msg: str = "") -> str:
     elif sign == "-":
         sign = " [red][-][/red]"
     elif sign == "!":
-        sign = " [yellow][+][/yellow]"
+        sign = " [yellow][!][/yellow]"
     elif sign == "*":
         sign = " [cyan][*][/cyan]"
     else:

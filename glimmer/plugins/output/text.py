@@ -7,13 +7,15 @@ class Plugin(PluginOutputBase):
         self._handler = open("result.txt", "w+")
 
     def handle(self, poc, result, **kwargs):
-        status = result.get('status', 1)
+        status = result.get('status', -1)
+        sign = ""
         if status == 0:
             sign = "+"
         elif status == 1:
             sign = "-"
         elif status == -1:
             sign = "!"
+
         extra = result.get('extra', {})
         msg = '%s %s (%s)' % (poc.name,
                               result.get("msg", ""), result.get("url"))
