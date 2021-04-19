@@ -2,7 +2,10 @@ __pypackages__/
 __pycache__/
 .pdm.toml
 *.pyc
-url.txt
-config.ini
+
 glimmer.egg-info/
 .vscode/
+
+url.txt
+config.ini
+result.txt
