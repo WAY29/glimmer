@@ -11,7 +11,7 @@ from utils.printer import header
 @click.group(invoke_without_command=True)
 @click.pass_context
 @click.option("--url", "-u", type=str, multiple=True, help="Load targets from {parser}.")
-@click.option("--file", "-f", type=str, multiple=True, help="Load targets from file and use {parser}.")
+@click.option("--file", "-f", type=str, multiple=True, help="Load targets from file and parse each line with {parser}.")
 @click.option("--poc", "-p", multiple=True, help="Load poc from {parser}.")
 @click.option("--pocs_path", help="User custom poc dir.")
 @click.option("--out", "-o", default=["console", ], multiple=True, help="Use output plugins. default is console")
@@ -22,6 +22,12 @@ from utils.printer import header
 @click.option("-vv", count=True, help="display more verbose information.")
 @click.option("--debug", count=True, help="setup debug mode.")
 def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str = "", url: str = "", file: str = "", poc=[], pocs_path: str = "", out=[], plugins_path: str = "", debug: int = 0):
+    """
+    A poc framework base on python.
+
+    Tips:
+    {parser} are plugins in plugins/parser which parse user input by protocol and get data for poc and target, you can write yourself parser.
+    """
     run_in_main = not ctx.invoked_subcommand
     root_path = path.dirname(path.realpath(__file__))
 
