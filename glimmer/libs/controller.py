@@ -81,11 +81,11 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
         # get result as completed
         for future in as_completed(futures, timeout):
             # update bar
-            if not CONFIG.option.debug:
-                bar.update(bar_task, advance=1)
 
             target, poc, poc_result = future.result()
             if target and poc and poc_result:
+                if not CONFIG.option.debug:
+                    bar.update(bar_task, advance=1)
                 status = poc_result.get("status", -1)
                 if status == 0:
                     logger_func = logger.info
