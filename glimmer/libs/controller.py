@@ -104,7 +104,7 @@ def _output(output_handlers, poc, poc_result):
         handler(poc, poc_result)
 
 
-def _load_and_parse_from_links_and_files(links, files, excludes=()):
+def _load_from_links_and_files(links, files):
     results = []
     if links:  # load from links
         results.extend(links)
@@ -115,7 +115,6 @@ def _load_and_parse_from_links_and_files(links, files, excludes=()):
             with open(file, "r") as f:
                 results.extend([line.strip()
                                for line in f.readlines() if line])
-    results = [parse_path(target, excludes) for target in results]
     return results
 
 
@@ -133,8 +132,10 @@ def load_config(config_path):
 def load_targets(urls, files):
     if not any((urls, files)):
         raise UsageError("option url/file is required")
-    targets = _load_and_parse_from_links_and_files(
-        urls, files, ("parser.url",))
+    targets = _load_from_links_and_files(
+        urls, files)
+    targets = [parse_path(target, ("parser.url",)) for target in targets]
+
     CONFIG.base.targets = targets
     for target in targets:
         logger.info(header("Load target", "*", target), extra={"markup": True})
@@ -150,7 +151,7 @@ def load_pocs(pocs=[], poc_files=[], pocs_path=""):
     if not pocs and not poc_files:
         pocs = [poc for poc in glob(str(pocs_path / "**" / "*.py"))]
     else:
-        pocs = _load_and_parse_from_links_and_files(pocs, poc_files)
+        pocs = _load_from_links_and_files(pocs, poc_files)
     for poc in pocs:
         if not poc:
             continue
