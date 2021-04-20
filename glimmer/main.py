@@ -3,7 +3,7 @@ from os import path
 import click
 
 from libs.controller import init, init_output_plugins, load_plugins, load_pocs, load_targets, start, load_config, end, init_plugins, enable_plugins, end_plugins
-from libs.core.config import POCS, CONFIG
+from libs.core.config import ConfigHandler, POCS, CONFIG
 from utils import banner, cprint, header, print_traceback, get_full_exception_name
 
 
