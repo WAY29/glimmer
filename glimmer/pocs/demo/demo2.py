@@ -1,4 +1,4 @@
-from api import PocBase, requests
+from api import PocBase, POC_TYPE, requests
 
 
 class Poc(PocBase):
@@ -6,6 +6,7 @@ class Poc(PocBase):
         this is a demo2
     """
     vulid = "0"
+    type = POC_TYPE.UNKNOWN
     version = "1.0"
     authors = ['Longlone']
     references = [""]
