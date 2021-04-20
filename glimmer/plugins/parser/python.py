@@ -12,9 +12,9 @@ class Plugin(PluginParserBase):
             with open(self.remove_protocol(module_path), "r") as f, catch_stdout() as s:
                 data = f.read()
                 exec(data)
-            return s.getvalue().strip()
+            return (s.getvalue().strip(), )
         except Exception:
-            return ""
+            return None
 
 
 register_plugin(Plugin)

@@ -17,6 +17,15 @@ version = "7.1.2"
 summary = "Composable command line interface toolkit"
 
 [[package]]
+name = "click-plugins"
+sections = ["default"]
+version = "1.1.1"
+summary = "An extension module for click to enable registering CLI commands via setuptools entry-points."
+dependencies = [
+    "click>=4.0",
+]
+
+[[package]]
 name = "colorama"
 sections = ["default"]
 version = "0.4.4"
@@ -73,6 +82,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "shodan"
+sections = ["default"]
+version = "1.25.0"
+summary = "Python library and command-line utility for Shodan (https://developer.shodan.io)"
+dependencies = [
+    "XlsxWriter",
+    "click",
+    "click-plugins",
+    "colorama",
+    "requests>=2.2.1",
+]
+
+[[package]]
 name = "typing-extensions"
 sections = ["default"]
 version = "3.7.4.3"
@@ -84,9 +106,25 @@ sections = ["default"]
 version = "1.26.4"
 summary = "HTTP library with thread-safe connection pooling, file post, and more."
 
+[[package]]
+name = "XlsxWriter"
+sections = ["default"]
+version = "1.3.9"
+summary = "A Python module for creating Excel XLSX files."
+
+[[package]]
+name = "zoomeye"
+sections = ["default"]
+version = "2.0.4.6.1"
+summary = "Python library and command-line tool for ZoomEye (https://www.zoomeye.org/doc)"
+dependencies = [
+    "requests>=2.2.1",
+    "colorama",
+]
+
 [metadata]
 lock_version = "2"
-content_hash = "sha256:d8fc11f95827ba6c5a5614cbb9e1c0601fdcf034cfb61b367c97192f8fbf3c5c"
+content_hash = "sha256:33030a5fae1139b463d033b73fb7b63cf9e1770b66b8097e755085aef21880a9"
 
 [metadata.files]
 "certifi 2020.12.5" = [
@@ -100,6 +138,10 @@ content_hash = "sha256:d8fc11f95827ba6c5a5614cbb9e1c0601fdcf034cfb61b367c97192f8
 "click 7.1.2" = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
     {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
+]
+"click-plugins 1.1.1" = [
+    {file = "click_plugins-1.1.1-py2.py3-none-any.whl", hash = "sha256:5d262006d3222f5057fd81e1623d4443e41dcda5dc815c06b442aa3c02889fc8"},
+    {file = "click-plugins-1.1.1.tar.gz", hash = "sha256:46ab999744a9d831159c3411bb0c79346d94a444df9a3a3742e9ed63645f264b"},
 ]
 "colorama 0.4.4" = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
@@ -129,6 +171,9 @@ content_hash = "sha256:d8fc11f95827ba6c5a5614cbb9e1c0601fdcf034cfb61b367c97192f8
     {file = "rich-10.0.0-py3-none-any.whl", hash = "sha256:01b3fcc305ae71b9ade4a645b6e371d395c6cd9ba52dcf180bfba69ef05c13b5"},
     {file = "rich-10.0.0.tar.gz", hash = "sha256:4674bd3056a72bb282ad581e3f8092dc110cdcc456b5ba76e34965cb85a69724"},
 ]
+"shodan 1.25.0" = [
+    {file = "shodan-1.25.0.tar.gz", hash = "sha256:7e2bddbc1b60bf620042d0010f4b762a80b43111dbea9c041d72d4325e260c23"},
+]
 "typing-extensions 3.7.4.3" = [
     {file = "typing_extensions-3.7.4.3-py2-none-any.whl", hash = "sha256:dafc7639cde7f1b6e1acc0f457842a83e722ccca8eef5270af2d74792619a89f"},
     {file = "typing_extensions-3.7.4.3-py3-none-any.whl", hash = "sha256:7cb407020f00f7bfc3cb3e7881628838e69d8f3fcab2f64742a5e76b2f841918"},
@@ -137,4 +182,12 @@ content_hash = "sha256:d8fc11f95827ba6c5a5614cbb9e1c0601fdcf034cfb61b367c97192f8
 "urllib3 1.26.4" = [
     {file = "urllib3-1.26.4-py2.py3-none-any.whl", hash = "sha256:2f4da4594db7e1e110a944bb1b551fdf4e6c136ad42e4234131391e21eb5b0df"},
     {file = "urllib3-1.26.4.tar.gz", hash = "sha256:e7b021f7241115872f92f43c6508082facffbd1c048e3c6e2bb9c2a157e28937"},
+]
+"xlsxwriter 1.3.9" = [
+    {file = "XlsxWriter-1.3.9-py2.py3-none-any.whl", hash = "sha256:e74dca4f2e946a117a541ca3153c06466190a88bb67fcdbd1cba2c1ea7f1fd76"},
+    {file = "XlsxWriter-1.3.9.tar.gz", hash = "sha256:eca2e737d0b8df3cd72520fadcda9f48c3581282639965125a86ea8cd04620cf"},
+]
+"zoomeye 2.0.4.6.1" = [
+    {file = "zoomeye-2.0.4.6.1-py3-none-any.whl", hash = "sha256:cc422f0644d59abe544d582991176dfe08d457a9f3e534668653cc6103aa9893"},
+    {file = "zoomeye-2.0.4.6.1.tar.gz", hash = "sha256:03fea6f97c422962685e79f6f36fdff43374d1b02e627ed70e4023547e787199"},
 ]

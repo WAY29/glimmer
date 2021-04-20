@@ -5,10 +5,9 @@ Reference: https://github.com/knownsec/pocsuite3
 import importlib
 from importlib.abc import Loader
 
-from libs.core.config import CONFIG
 from libs.core.parser import parse_path
 from libs.core.exceptions import ModuleLoadExceptions
-from utils import get_md5, print_traceback
+from utils import get_md5
 
 
 def load_string_to_module(code_string, fullname=None):
@@ -28,7 +27,7 @@ def load_string_to_module(code_string, fullname=None):
 
 def load_module(module_path: str, fullname=None, verify_func=None):
     fullname = fullname if fullname else module_path
-    data = parse_path(module_path)
+    data = parse_path(module_path)[0]
     if not data:
         raise ModuleLoadExceptions.Base("parse data error / no data")
     module = load_string_to_module(data, fullname)

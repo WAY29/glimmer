@@ -10,7 +10,7 @@ class Plugin(PluginParserBase):
     def get_data(self, module_path):
         module_path = self.remove_protocol(module_path)
         with open(module_path, "r") as f:
-            return f.read()
+            return (f.read(), )
         return ""
 
 
