@@ -65,7 +65,8 @@ example: `file://./url.txt`
 ### url
 example: `http://localhost`, `https://baidu.com`
 ### python
-example: `python://./test.py`
+example: `python://./poc.py`, `pythons://./targets.py`
+**if protocol is pythons, the result will be split by line, so you can generate multi targets.**
 ### shodan
 example: `shodan://[key@]shodan.io/?q={query_str}[&max_page=1&limit=0]`
 
