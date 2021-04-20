@@ -1,5 +1,4 @@
-from api import PluginParserBase, register_plugin
-from utils import is_valid_pathname
+from api import PluginParserBase, register_plugin, is_valid_pathname
 
 
 class Plugin(PluginParserBase):

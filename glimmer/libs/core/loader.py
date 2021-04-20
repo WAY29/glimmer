@@ -5,9 +5,10 @@ Reference: https://github.com/knownsec/pocsuite3
 import importlib
 from importlib.abc import Loader
 
+from libs.core.config import CONFIG
 from libs.core.parser import parse_path
 from libs.core.exceptions import ModuleLoadExceptions
-from utils import get_md5
+from utils import get_md5, print_traceback
 
 
 def load_string_to_module(code_string, fullname=None):

@@ -1,5 +1,4 @@
-from api import PluginParserBase, register_plugin, requests
-from utils import is_valid_url
+from api import PluginParserBase, register_plugin, requests, is_valid_url
 
 
 class Plugin(PluginParserBase):
