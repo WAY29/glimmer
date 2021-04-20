@@ -8,11 +8,10 @@ def parse_path(path, excludes=()):
     for parser in parsers:
         parser_str = str(parser)
         if any(exclude in parser_str for exclude in excludes):
-            return path
+            continue
         if parser.rule_check(path):
             try:
                 return parser.get_data(path)
             except Exception as e:
                 raise ParserExceptions.Base() from e
-        else:
-            return path
+    return path
