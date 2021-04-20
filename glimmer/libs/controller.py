@@ -84,7 +84,8 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
         if not CONFIG.option.debug:
             bar_task = bar.add_task("[cyan]testing", total=tasks_queue.qsize())
         # create futures
-        _ = [pool.submit(_work, tasks_queue, results_queue) for _ in range(threads)]
+        _ = [pool.submit(_work, tasks_queue, results_queue)
+             for _ in range(threads)]
         # get result as completed
         while finish_tasks_num < tasks_num:
             try:
@@ -131,13 +132,16 @@ def _load_from_links_and_files(links, files):
 
 def load_config(config_path):
     if config_path and path.isfile(config_path):
-        logger.info("load_config: load configuration from file")
-        config = ConfigHandler(config_path)
-        CONFIG.base.configuration = config
-        request_config = config.request
-        CONFIG.base.request = request_config
+        logger.info("load_config: load configuration from " + config_path)
     else:
-        logger.warning("load_config: config_path [%s] not found" % config_path)
+        logger.warning("load_config: config_path [%s] not found, use default config" % config_path)
+        config_path = path.abspath(path.join(CONFIG.base.root_path, "..", "default_config.ini"))
+
+    config = ConfigHandler(config_path)
+    CONFIG.base.configuration = config
+    request_config = config.request
+    CONFIG.base.request = request_config
+
 
 
 def load_targets(urls, files):

@@ -30,7 +30,7 @@ def get_md5(value):
 def get_full_exception_name(exc):
     name = ""
     exc_class = exc.__class__
-    while exc_class != object:
+    while exc_class != Exception:
         name = exc_class.__name__ + "." + name
         exc_class = exc_class.__base__
     name = name.rstrip(".")
