@@ -126,8 +126,8 @@ def load_config(config_path):
     if config_path and path.isfile(config_path):
         logger.info("load_config: load configuration from file")
         config = ConfigHandler(config_path)
-        CONFIG.base.config = config
-        request_config = config.get("request")
+        CONFIG.base.configuration = config
+        request_config = config.request
         CONFIG.base.request = request_config
     else:
         logger.warning("load_config: config_path [%s] not found" % config_path)
