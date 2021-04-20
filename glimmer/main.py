@@ -3,9 +3,8 @@ from os import path
 import click
 
 from libs.controller import init, init_output_plugins, load_plugins, load_pocs, load_targets, start, load_config, end, init_plugins, enable_plugins, end_plugins
-from libs.core.config import POCS
-from utils import banner, cprint
-from utils.printer import header
+from libs.core.config import POCS, CONFIG
+from utils import banner, cprint, header, print_traceback, get_full_exception_name
 
 
 @click.group(invoke_without_command=True)
@@ -35,22 +34,28 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
 
     if run_in_main:
         banner()
+    try:
+        init(root_path, verbose, vv, debug)
+        load_config(config)
+        load_plugins(plugins_path)
+        load_pocs(poc, poc_file, pocs_path)
 
-    init(root_path, verbose, vv, debug)
-    load_config(config)
-    load_plugins(plugins_path)
-    load_pocs(poc, poc_file, pocs_path)
-
-    if run_in_main:
-        enable_plugins(out)
-        try:
-            init_plugins()
-            init_output_plugins(out)
-            load_targets(url, file)
-            start(threads, timeout)
-        finally:
-            end_plugins()
-            end()
+        if run_in_main:
+            enable_plugins(out)
+            try:
+                init_plugins()
+                init_output_plugins(out)
+                load_targets(url, file)
+                start(threads, timeout)
+            finally:
+                end_plugins()
+                end()
+    except Exception as e:
+        if CONFIG.option.debug:
+            print_traceback()
+        else:
+            cprint(header("Base", "-", "Main breakout: %s: %s\n" %
+                   (get_full_exception_name(e), str(e))))
 
     ...
 
@@ -60,7 +65,8 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
 @click.argument("pocs", nargs=-1)
 def show_poc_info(pocs, type=""):
     if type:
-        result = ", ".join(poc_name for poc_name, poc in POCS.instances.items() if type in poc.type)
+        result = ", ".join(poc_name for poc_name,
+                           poc in POCS.instances.items() if type in poc.type)
         result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
         cprint("[yellow]Search result:[/]\n    " + result)
         return

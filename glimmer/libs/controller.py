@@ -2,15 +2,16 @@ from glob import glob
 from os import path
 from sys import path as sys_path
 from pathlib import Path
-from queue import Queue
+from queue import Queue, Empty
 from time import strftime
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from itertools import chain
+from concurrent.futures import ThreadPoolExecutor
 
 from click import UsageError
 from rich.progress import Progress, SpinnerColumn, BarColumn
 
 from libs.core.parser import parse_path
-from utils import cprint, header, print_traceback, CONSOLE
+from utils import cprint, header, CONSOLE
 from libs.request import patch_request
 from libs.logger import init_logger, logger
 from libs.core.loader import load_module
@@ -47,8 +48,6 @@ def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
     try:
         module = load_module(poc_path, fullname, verify_func)
     except ModuleLoadExceptions.Base as e:
-        if CONFIG.option.debug:
-            print_traceback()
         msg = header(msgType, "-", "load poc %s error: " %
                      fullname + str(e) + "\n")
         return None, msg
@@ -57,39 +56,47 @@ def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
         return module, msg
 
 
-def _work(tasks_queue):
-    if not tasks_queue.empty():
+def _work(tasks_queue, results_queue):
+    while not tasks_queue.empty():
         target, poc = tasks_queue.get()
         try:
             res = poc.check(target)
-            return target, poc, res
         except Exception as err:
-            if CONFIG.option.debug:
-                print_traceback()
             res = {"url": "",
                    "status": -1,
                    "msg": "work error: " + str(err),
                    "extra": {}
                    }
-        return target, poc, res
-    return None, None, None
+        results_queue.put((target, poc, res))
 
 
 def _run(threads, tasks_queue, results, timeout, output_handlers):
+    results_queue = Queue()
+    finish_tasks_num = 0
+    tasks_num = tasks_queue.qsize()
     with ThreadPoolExecutor(threads) as pool, Progress(SpinnerColumn(), "{task.description}", BarColumn(), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
+        def _update_progress_bar():
+            # update bar
+            if not CONFIG.option.debug:
+                bar.update(bar_task, advance=1)
+
         # create bar_task
         if not CONFIG.option.debug:
             bar_task = bar.add_task("[cyan]testing", total=tasks_queue.qsize())
         # create futures
-        futures = [pool.submit(_work, tasks_queue) for _ in range(threads)]
+        _ = [pool.submit(_work, tasks_queue, results_queue) for _ in range(threads)]
         # get result as completed
-        for future in as_completed(futures, timeout):
-            # update bar
-
-            target, poc, poc_result = future.result()
+        while finish_tasks_num < tasks_num:
+            try:
+                target, poc, poc_result = results_queue.get(True, timeout)
+            except Empty:
+                finish_tasks_num += 1
+                _update_progress_bar()
+                continue
             if target and poc and poc_result:
-                if not CONFIG.option.debug:
-                    bar.update(bar_task, advance=1)
+                finish_tasks_num += 1
+                _update_progress_bar()
+
                 status = poc_result.get("status", -1)
                 if status == 0:
                     logger_func = logger.info
@@ -138,11 +145,23 @@ def load_targets(urls, files):
         raise UsageError("option url/file is required")
     targets = _load_from_links_and_files(
         urls, files)
+    # parse targets
     targets = [parse_path(target, ("parser.url",)) for target in targets]
-
+    # list expand
+    targets = tuple(chain.from_iterable(targets))
     CONFIG.base.targets = targets
+
+    debug_msg = ""
     for target in targets:
-        logger.info(header("Load target", "*", target), extra={"markup": True})
+        temp_msg = header("Load target", "*", target)
+        logger.info(temp_msg, extra={"markup": True})
+        debug_msg += temp_msg + "\n"
+
+    if CONFIG.option.get("very_verbose", False):
+        cprint(debug_msg)
+    elif CONFIG.option.get("verbose", False):
+        cprint(header("Load target", "+",
+                      "Loaded [%d] pocs" % len(targets)))
 
 
 def load_pocs(pocs=[], poc_files=[], pocs_path=""):
@@ -224,8 +243,6 @@ def load_plugins(plugins_path):
 
             logger.info(temp_msg, extra={"markup": True})
         except ImportError as e:
-            if CONFIG.option.debug:
-                print_traceback()
             temp_msg = header("Load plugin", "-", "load plugin %s.%s error: " %
                               (plugin_type_dir, fname) + str(e) + "\n")
             debug_msg += temp_msg

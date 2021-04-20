@@ -7,6 +7,7 @@ CONFIG
     - targets []
     - request {}
     - configuration ConfigHandler
+        - .xxx / .get('xxx') {}
     option:
     - debug 0
     - verbose 0

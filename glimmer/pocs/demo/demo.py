@@ -19,7 +19,7 @@ class Poc(PocBase):
         result = {
             "url": url,
             "status": 0 if res.status_code == 200 else 1,
-            "msg": "demo poc " + "success" if res.status_code == 200 else "failed",
+            "msg": "demo poc " + ("success" if res.status_code == 200 else "failed"),
             "extra": {
             }
         }
