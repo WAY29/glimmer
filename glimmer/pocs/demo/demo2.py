@@ -5,7 +5,7 @@ class Poc(PocBase):
     """
         this is a demo2
     """
-    vulid = "0"
+    vulid = "292930"
     type = POC_TYPE.UNKNOWN
     version = "1.0"
     authors = ['Longlone']
