@@ -8,6 +8,7 @@ CONFIG
     - request {}
     - config ConfigHandler
     option:
+    - debug 0
     - verbose 0
     - very_verbose 0
 

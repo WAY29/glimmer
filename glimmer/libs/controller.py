@@ -10,7 +10,7 @@ from click import UsageError
 from rich.progress import Progress, SpinnerColumn, BarColumn
 
 from libs.core.parser import parse_path
-from utils import cprint, header, CONSOLE
+from utils import cprint, header, print_traceback, CONSOLE
 from libs.request import patch_request
 from libs.logger import init_logger, logger
 from libs.core.loader import load_module
@@ -47,6 +47,8 @@ def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
     try:
         module = load_module(poc_path, fullname, verify_func)
     except ModuleLoadExceptions.Base as e:
+        if CONFIG.option.debug:
+            print_traceback()
         msg = header(msgType, "-", "load poc %s error: " %
                      fullname + str(e) + "\n")
         return None, msg
@@ -62,6 +64,8 @@ def _work(tasks_queue):
             res = poc.check(target)
             return target, poc, res
         except Exception as err:
+            if CONFIG.option.debug:
+                print_traceback()
             res = {"url": "",
                    "status": -1,
                    "msg": "work error: " + str(err),
@@ -220,6 +224,8 @@ def load_plugins(plugins_path):
 
             logger.info(temp_msg, extra={"markup": True})
         except ImportError as e:
+            if CONFIG.option.debug:
+                print_traceback()
             temp_msg = header("Load plugin", "-", "load plugin %s.%s error: " %
                               (plugin_type_dir, fname) + str(e) + "\n")
             debug_msg += temp_msg
