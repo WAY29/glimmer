@@ -14,7 +14,7 @@ from glimmer.libs.core.parser import parse_path
 from glimmer.utils import cprint, header, CONSOLE, print_traceback
 from glimmer.libs.request import patch_request
 from glimmer.libs.logger import init_logger, logger
-from glimmer.libs.core.loader import load_module
+from glimmer.libs.core.loader import load_modules
 from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
 from glimmer.libs.core.exceptions import ModuleLoadExceptions
 
@@ -46,14 +46,14 @@ def _set_config(root_path, verbose, very_verbose, debug):
 
 def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
     try:
-        module = load_module(poc_path, fullname, verify_func)
+        modules = load_modules(poc_path, fullname, verify_func)
     except ModuleLoadExceptions.Base as e:
-        msg = header(msgType, "-", "load poc %s error: " %
+        msg = header(msgType, "-", "load poc(s) %s error: " %
                      fullname + str(e) + "\n")
         return None, msg
     else:
-        msg = header(msgType, "+", "load poc %s\n" % fullname)
-        return module, msg
+        msg = header(msgType, "+", "load poc(s) %s\n" % fullname)
+        return modules, msg
 
 
 def _work(tasks_queue, results_queue):
@@ -201,13 +201,13 @@ def load_pocs(pocs=[], poc_files=[], pocs_path=""):
         else:
             poc_type_dir = "_" + poc[:poc.index("://")]
 
-        module, load_msg = _load_poc(
+        modules, load_msg = _load_poc(
             poc_path, fname, "Load %s poc" % poc_type_dir, _verify_poc)
-        if module:
+        if modules:
             if poc_type_dir not in count_dict:
                 count_dict[poc_type_dir] = 0
-            count_dict[poc_type_dir] += 1
-            instances[fname] = module.Poc()
+            count_dict[poc_type_dir] += len(modules)
+            instances[fname] = [module.Poc() for module in modules]
         else:
             msg += load_msg
             logger_func = logger.error
@@ -314,7 +314,8 @@ def start(threads, timeout):
     targets = CONFIG.base.targets
     tasks_queue = Queue()
     results = {}
-    pocs = [poc for poc in POCS.instances.values()]
+    pocs = [poc_s for poc_s in POCS.instances.values()]
+    pocs = chain.from_iterable(pocs)
     for target in targets:
         results[target] = {}
         for poc in pocs:

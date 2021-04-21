@@ -25,15 +25,18 @@ def load_string_to_module(code_string, fullname=None):
         raise ModuleLoadExceptions.Base(exc) from exc
 
 
-def load_module(module_path: str, fullname=None, verify_func=None):
+def load_modules(module_path, fullname=None, verify_func=None):
     fullname = fullname if fullname else module_path
-    data = parse_path(module_path)[0]
-    if not data:
-        raise ModuleLoadExceptions.Base("parse data error / no data")
-    module = load_string_to_module(data, fullname)
-    if callable(verify_func):
-        verify_func(module)
-    return module
+    results = parse_path(module_path)
+    modules = []
+    for i, data in enumerate(results):
+        if not results:
+            raise ModuleLoadExceptions.Base("parse data error / no data")
+        module = load_string_to_module(data, fullname + "_" + str(i))
+        modules.append(module)
+        if callable(verify_func):
+            verify_func(module)
+    return modules
 
 
 class PocLoader(Loader):

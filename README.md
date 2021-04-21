@@ -69,7 +69,7 @@ example: `file://./url.txt`
 example: `http://localhost`, `https://baidu.com`
 ### python
 example: `python://./poc.py`, `pythons://./targets.py`
-**if protocol is pythons, the result will be split by line, so you can generate multi targets.**
+**if protocol is pythons, the result will be split by line and decode if encoded by base64, so you can generate multi targets / pocs.**
 ### shodan
 example: `shodan://[key@]shodan.io/?q={query_str}[&max_page=1&limit=0]`
 
