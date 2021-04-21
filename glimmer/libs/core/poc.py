@@ -1,5 +1,5 @@
-from utils import cprint
-from libs.core.enums import POC_TYPE
+from glimmer.utils import cprint
+from glimmer.libs.core.enums import POC_TYPE
 
 
 class PocBase():

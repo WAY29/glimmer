@@ -5,9 +5,9 @@ Reference: https://github.com/knownsec/pocsuite3
 import importlib
 from importlib.abc import Loader
 
-from libs.core.parser import parse_path
-from libs.core.exceptions import ModuleLoadExceptions
-from utils import get_md5
+from glimmer.libs.core.parser import parse_path
+from glimmer.libs.core.exceptions import ModuleLoadExceptions
+from glimmer.utils import get_md5
 
 
 def load_string_to_module(code_string, fullname=None):

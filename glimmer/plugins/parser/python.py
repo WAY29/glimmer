@@ -1,4 +1,4 @@
-from api import PluginParserBase, register_plugin, catch_stdout, is_valid_pathname
+from glimmer.api import PluginParserBase, register_plugin, catch_stdout, is_valid_pathname
 
 
 class Plugin(PluginParserBase):

@@ -10,13 +10,13 @@ from concurrent.futures import ThreadPoolExecutor
 from click import UsageError
 from rich.progress import Progress, SpinnerColumn, BarColumn
 
-from libs.core.parser import parse_path
-from utils import cprint, header, CONSOLE
-from libs.request import patch_request
-from libs.logger import init_logger, logger
-from libs.core.loader import load_module
-from libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
-from libs.core.exceptions import ModuleLoadExceptions
+from glimmer.libs.core.parser import parse_path
+from glimmer.utils import cprint, header, CONSOLE
+from glimmer.libs.request import patch_request
+from glimmer.libs.logger import init_logger, logger
+from glimmer.libs.core.loader import load_module
+from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
+from glimmer.libs.core.exceptions import ModuleLoadExceptions
 
 
 def _verify_poc(module):

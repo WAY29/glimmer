@@ -1,4 +1,4 @@
-from libs.core.config import PLUGINS, AttribDict
+from glimmer.libs.core.config import PLUGINS, AttribDict
 
 
 class PluginBase():
