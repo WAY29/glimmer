@@ -20,7 +20,7 @@ def init_logger(debug):
     if debug:
         level = logging.DEBUG
     else:
-        level = logging.ERROR
+        level = logging.CRITICAL
     logging.basicConfig(
         level=level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
     )

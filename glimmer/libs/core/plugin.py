@@ -18,9 +18,15 @@ class PluginParserBase(PluginBase):
 
     def remove_protocol(self, module_path):
         for protocol in self.protocols:
-            if module_path.startswith(protocol):
+            if module_path.startswith(protocol + "://"):
                 return module_path[len(protocol)+3:]
         return module_path
+
+    def get_protocol(self, module_path):
+        for protocol in self.protocols:
+            if module_path.startswith(protocol + "://"):
+                return protocol
+        return ""
 
 
 class PluginOutputBase(PluginBase):

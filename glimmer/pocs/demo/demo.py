@@ -1,4 +1,4 @@
-from api import PocBase, requests
+from api import PocBase, POC_TYPE, requests
 
 
 class Poc(PocBase):
@@ -6,6 +6,7 @@ class Poc(PocBase):
         this is a demo
     """
     vulid = "292929"
+    type = POC_TYPE.UNKNOWN
     version = "1.0"
     authors = ['Longlone']
     references = [""]
@@ -18,7 +19,7 @@ class Poc(PocBase):
         result = {
             "url": url,
             "status": 0 if res.status_code == 200 else 1,
-            "msg": "demo poc " + "success" if res.status_code == 200 else "failed",
+            "msg": "demo poc " + ("success" if res.status_code == 200 else "failed"),
             "extra": {
             }
         }

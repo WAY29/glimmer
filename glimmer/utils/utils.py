@@ -27,6 +27,16 @@ def get_md5(value):
     return hashlib.md5(value).hexdigest()
 
 
+def get_full_exception_name(exc):
+    name = ""
+    exc_class = exc.__class__
+    while exc_class != Exception:
+        name = exc_class.__name__ + "." + name
+        exc_class = exc_class.__base__
+    name = name.rstrip(".")
+    return name
+
+
 def is_valid_pathname(pathname: str) -> bool:
     '''
     `True` if the passed pathname is a valid pathname for the current OS;

@@ -2,6 +2,7 @@ from rich.console import Console
 
 CONSOLE = Console()
 cprint = CONSOLE.print
+print_traceback = CONSOLE.print_exception
 
 
 def header(typ: str = "Base", sign: str = "", msg: str = "") -> str:
@@ -22,4 +23,4 @@ def header(typ: str = "Base", sign: str = "", msg: str = "") -> str:
     return "%s%s %s" % (typ, sign, msg)
 
 
-__all__ = ["CONSOLE", "cprint", "header"]
+__all__ = ["CONSOLE", "cprint", "header", "print_traceback"]

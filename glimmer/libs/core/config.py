@@ -6,8 +6,10 @@ CONFIG
     - root_path ""
     - targets []
     - request {}
-    - config ConfigHandler
+    - configuration ConfigHandler
+        - .xxx / .get('xxx') {}
     option:
+    - debug 0
     - verbose 0
     - very_verbose 0
 
@@ -72,14 +74,13 @@ class ConfigHandler:
         self._config = ConfigParser()
         self.config_path = config_path
         if config_path:
-            self._config.read(config_path)
+            self.load(config_path)
 
-    def loads(self, config_path):
-        self._config.load(config_path)
+    def load(self, config_path):
+        self._config.read(config_path)
+        self._sections = self._config.sections()
 
     def sections(self):
-        if not hasattr(self, "_sections"):
-            self._sections = self._config.sections()
         return self._sections
 
     def get(self, search_key, default=""):
@@ -95,6 +96,11 @@ class ConfigHandler:
             if results:
                 return results
         return default
+
+    def __getattr__(self, name):
+        if (name.startswith('_')):
+            return super().__getattribute__(name)
+        return self.get(name)
 
 
 CONFIG = AttribDict()
