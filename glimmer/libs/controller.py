@@ -137,7 +137,7 @@ def load_config(config_path):
         logger.info("load_config: load configuration from " + config_path)
     else:
         logger.warning("load_config: config_path [%s] not found, use default config" % config_path)
-        config_path = path.abspath(path.join(CONFIG.base.root_path, "..", "default_config.ini"))
+        config_path = path.abspath(path.join(CONFIG.base.root_path, "data", "default_config.ini"))
 
     config = ConfigHandler(config_path)
     CONFIG.base.configuration = config

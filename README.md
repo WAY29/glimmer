@@ -52,6 +52,9 @@ Commands:
   show-poc-info
 ```
 
+## config
+You can use the `-c` option to specify the configuration file, if not set, glimmer will use default config in glimmer/data/default_config.ini, you can copy it and change by yourself.
+
 ## parser
 Support parsers
 - file
