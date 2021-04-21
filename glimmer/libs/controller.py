@@ -11,7 +11,7 @@ from click import UsageError
 from rich.progress import Progress, SpinnerColumn, BarColumn
 
 from glimmer.libs.core.parser import parse_path
-from glimmer.utils import cprint, header, CONSOLE
+from glimmer.utils import cprint, header, CONSOLE, print_traceback
 from glimmer.libs.request import patch_request
 from glimmer.libs.logger import init_logger, logger
 from glimmer.libs.core.loader import load_module
@@ -67,6 +67,8 @@ def _work(tasks_queue, results_queue):
                    "msg": "work error: " + str(err),
                    "extra": {}
                    }
+            if CONFIG.option.debug:
+                print_traceback()
         results_queue.put((target, poc, res))
 
 
