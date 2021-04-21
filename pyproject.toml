@@ -1,5 +1,5 @@
 [project]
-name = "glimmer"
+name = "python-glimmer"
 version = "1.0.0"
 description = ""
 authors = [
@@ -19,6 +19,9 @@ license = {text = "MIT"}
 
 [project.urls]
 homepage = ""
+
+[project.scripts]
+glimmer = "glimmer.main:main"
 
 [build-system]
 requires = ["pdm-pep517"]

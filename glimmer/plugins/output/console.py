@@ -1,4 +1,4 @@
-from api import PluginOutputBase, register_plugin, cprint, header
+from glimmer.api import PluginOutputBase, register_plugin, cprint, header
 
 
 class Plugin(PluginOutputBase):

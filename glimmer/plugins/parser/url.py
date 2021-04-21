@@ -1,4 +1,4 @@
-from api import PluginParserBase, register_plugin, requests, is_valid_url
+from glimmer.api import PluginParserBase, register_plugin, requests, is_valid_url
 
 
 class Plugin(PluginParserBase):

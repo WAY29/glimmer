@@ -3,7 +3,7 @@ import json
 from urllib.parse import urlencode
 import requests
 
-from libs.core.exceptions import ParserExceptions
+from glimmer.libs.core.exceptions import ParserExceptions
 
 
 class FofaClient:

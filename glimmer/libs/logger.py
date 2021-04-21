@@ -1,7 +1,7 @@
 import logging
 from rich.logging import RichHandler
 
-from libs.core.exceptions import LoggerExceptions
+from glimmer.libs.core.exceptions import LoggerExceptions
 
 
 class WrapLogger(object):

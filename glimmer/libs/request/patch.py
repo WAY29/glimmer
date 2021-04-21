@@ -8,8 +8,8 @@ from requests.cookies import RequestsCookieJar
 from requests.utils import get_encodings_from_content
 
 import logging
-from libs.logger import logger
-from libs.core.config import CONFIG
+from glimmer.libs.logger import logger
+from glimmer.libs.core.config import CONFIG
 
 
 def session_request(self, method, url,

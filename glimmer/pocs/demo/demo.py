@@ -1,4 +1,4 @@
-from api import PocBase, POC_TYPE, requests
+from glimmer.api import PocBase, POC_TYPE, requests
 
 
 class Poc(PocBase):

@@ -1,4 +1,4 @@
-from api import PluginParserBase, register_plugin, CONFIG, ParserExceptions, cyberspace
+from glimmer.api import PluginParserBase, register_plugin, CONFIG, ParserExceptions, cyberspace
 
 from urllib import parse
 

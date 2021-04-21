@@ -52,6 +52,9 @@ Commands:
   show-poc-info
 ```
 
+## config
+You can use the `-c` option to specify the configuration file, if not set, glimmer will use default config in glimmer/data/default_config.ini, you can copy it and change by yourself.
+
 ## parser
 Support parsers
 - file
@@ -66,7 +69,7 @@ example: `file://./url.txt`
 example: `http://localhost`, `https://baidu.com`
 ### python
 example: `python://./poc.py`, `pythons://./targets.py`
-**if protocol is pythons, the result will be split by line, so you can generate multi targets.**
+**if protocol is pythons, the result will be split by line and decode if encoded by base64, so you can generate multi targets / pocs.**
 ### shodan
 example: `shodan://[key@]shodan.io/?q={query_str}[&max_page=1&limit=0]`
 
