@@ -6,7 +6,7 @@ class Poc(PocBase):
     """
         this poc will check if target website exist .svn source leak
     """
-    vulid = "1"
+    vulid = "2"
     type = POC_TYPE.CODE_DISCLOSURE
     version = "1.0"
     authors = ['Longlone']

@@ -4,26 +4,26 @@ from urllib import parse
 
 class Poc(PocBase):
     """
-        this poc will check if target website exist .DS_Store source leak
+        this poc will check if target website exist crossdomin.xml
     """
-    vulid = "3"
-    type = POC_TYPE.CODE_DISCLOSURE
+    vulid = "12"
+    type = POC_TYPE.INFORMATION_DISCLOSURE
     version = "1.0"
     authors = ['Longlone']
-    references = ["https://github.com/WAY29/ctfbox", "https://github.com/0xHJK/dumpall"]
-    name = ".DS_Store code leak"
-    appName = "mac finder"
-    appVersion = "all"
+    references = []
+    name = "crossdomin.xml information leak"
+    appName = ""
+    appVersion = ""
 
     def check(self, url, **kwargs):
-        target_url = parse.urljoin(url, ".DS_Store")
+        target_url = parse.urljoin(url, "crossdomin.xml")
         res = requests.get(target_url)
         status = 0 if res.status_code == 200 else 1
 
         if not status:
-            msg = "exist .DS_Store source leak"
+            msg = "exist crossdomin.xml information leak"
         else:
-            msg = "not exist .DS_Store source leak"
+            msg = "not exist crossdomin.xml information leak"
         result = {
             "url": target_url,
             "status": status,
