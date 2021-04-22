@@ -179,6 +179,7 @@ def load_targets(urls, files):
 
     if CONFIG.option.get("verbose", False):
         cprint(count_msg)
+    cprint()
 
 
 def load_pocs(pocs=[], poc_files=[], pocs_path=""):
