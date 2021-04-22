@@ -1,12 +1,19 @@
 [main]
-  version   = "1.0.0"
-  tag       = false
   serialize = "{version}-{banner}"
+  tag = true
+  version = "1.1.0"
+
 [[operate]]
   location = "pyproject.toml"
-  search   = "version = \"{}\""
-  replace  = "version = \"{}\""
+  replace = "version = \"{}\""
+  search = "version = \"{}\""
+
 [[operate]]
   location = "glimmer/utils/utils.py"
-  search   = "__version__ = \"{}\""
-  replace  = "__version__ = \"{}\""
+  replace = "__version__ = \"{}\""
+  search = "__version__ = \"{}\""
+
+[[operate]]
+  location = "README.md"
+  replace = "Current version: {}"
+  search = "Current version: {}"
