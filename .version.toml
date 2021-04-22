@@ -1,6 +1,6 @@
 [main]
   version   = "1.0.0"
-  tag       = false
+  tag       = true
   serialize = "{version}-{banner}"
 [[operate]]
   location = "pyproject.toml"
@@ -10,3 +10,7 @@
   location = "glimmer/utils/utils.py"
   search   = "__version__ = \"{}\""
   replace  = "__version__ = \"{}\""
+[[operate]]
+  location = "README.md"
+  search   = "Current version: {}"
+  replace  = "Current version: {}"
