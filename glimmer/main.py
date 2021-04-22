@@ -64,17 +64,20 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
 @click.option("--type", "-t", type=str, help="search pocs by input string.")
 @click.argument("pocs", nargs=-1)
 def show_poc_info(pocs, type=""):
+    """
+    Show poc information or search poc by poc type.
+    """
     if type:
-
         result = ", ".join(poc_name for poc_name,
-                           poc_s in POCS.instances.items() if any(type in poc.type for poc in poc_s))
+                           poc_s in POCS.instances.items() if any(type.lower() in poc.type.lower() for poc in poc_s))
         result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
         cprint("[yellow]Search result:[/]\n    " + result)
         return
     for poc_name in pocs:
         if poc_name in POCS.instances:
-            poc = POCS.instances[poc_name]
-            poc.show_info()
+            poc_s = POCS.instances[poc_name]
+            for poc in poc_s:
+                poc.show_info()
         else:
             cprint(header("", "-", "can't find %s" % poc_name))
 
