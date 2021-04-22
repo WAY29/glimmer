@@ -109,7 +109,7 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
                     logger_func = logger.info
                 else:
                     logger_func = logger.error
-                logger_func("_run: done poc: %s" % poc.name)
+                logger_func("_run: done poc: %s for %s" % (poc.name, target))
 
                 results[target][poc.name] = poc_result
                 # handle result
@@ -164,23 +164,27 @@ def load_targets(urls, files):
 
     CONFIG.base.targets = targets
 
-    debug_msg = ""
+    detail_msgs = ""
     for target in targets:
         temp_msg = header("Load target", "*", target)
         logger.info(temp_msg, extra={"markup": True})
-        debug_msg += temp_msg + "\n"
+        detail_msgs += temp_msg
 
     if CONFIG.option.get("very_verbose", False):
-        cprint(debug_msg)
-    elif CONFIG.option.get("verbose", False):
-        cprint(header("Load target", "+",
-                      "Loaded [%d] targets" % len(targets)))
+        cprint(detail_msgs)
+
+    count_msg = header("Load targets", "+",
+                       "Loaded [%d] targets" % len(targets))
+    logger.info(count_msg, extra={"markup": True})
+
+    if CONFIG.option.get("verbose", False):
+        cprint(count_msg)
 
 
 def load_pocs(pocs=[], poc_files=[], pocs_path=""):
     pocs_path = Path(CONFIG.base.root_path /
                      "pocs") if not pocs_path else Path(pocs_path)
-    msg = ""
+    detail_msgs = ""
     instances = POCS.instances
     count_dict = {}
     if not pocs and not poc_files:
@@ -215,25 +219,27 @@ def load_pocs(pocs=[], poc_files=[], pocs_path=""):
             count_dict[poc_type_dir] += len(modules)
             instances[fname] = [module.Poc() for module in modules]
         else:
-            msg += load_msg
+            detail_msgs += load_msg
             logger_func = logger.error
         if CONFIG.option.get("very_verbose", False):
             cprint(load_msg)
         logger_func(load_msg, extra={"markup": True})
 
-    msg = "\n".join(header("Load %s poc" % k, "+",
-                    "Loaded [%d] pocs" % v) for k, v in count_dict.items()) + msg + "\n"
-    POCS.messages = msg
+    count_msg = "\n".join(header("Load %s pocs" % k, "+",
+                                 "Loaded [%d] pocs" % v) for k, v in count_dict.items()) + "\n"
+    POCS.messages = detail_msgs
+
+    logger.info(count_msg, extra={"markup": True})
 
     if CONFIG.option.get("verbose", False):
-        cprint(msg)
+        cprint(count_msg)
 
 
 def load_plugins(plugins_path):
     from importlib import import_module
     plugins_path = Path(CONFIG.base.root_path /
                         "plugins") if not plugins_path else Path(plugins_path)
-    msg = ""
+    detail_msgs = ""
     count_dict = {}
 
     for f in glob(str(plugins_path / "**" / "*.py")):
@@ -252,19 +258,20 @@ def load_plugins(plugins_path):
         except ImportError as e:
             temp_msg = header("Load plugin", "-", "load plugin %s.%s error: " %
                               (plugin_type_dir, fname) + str(e) + "\n")
-            msg += temp_msg
+            detail_msgs += temp_msg
 
             logger.error(temp_msg, extra={"markup": True})
         if CONFIG.option.get("very_verbose", False):
             cprint(temp_msg)
 
-    msg = "\n".join(header("Load %s plugin" % k, "+",
-                    "Loaded [%d] plugins" % v) for k, v in count_dict.items()) + msg + "\n"
-    PLUGINS.messages = msg
-    # PLUGINS.debug_messages = debug_msg
+    count_msg = "\n".join(header("Load %s plugin" % k, "+",
+                                 "Loaded [%d] plugins" % v) for k, v in count_dict.items()) + "\n"
+    PLUGINS.messages = detail_msgs
+
+    logger.info(count_msg, extra={"markup": True})
 
     if CONFIG.option.get("verbose", False):
-        cprint(msg)
+        cprint(count_msg)
 
 
 def enable_plugins(outs, *args):
