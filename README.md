@@ -64,7 +64,8 @@ Support parsers
 - zoomeye
 - fofa
 ### file
-example: `file://./url.txt`
+example: `file://./url.txt`, `files://./poc.txt`
+**if protocol is files, the result will be split by line and decode if encoded by base64, so you can generate multi targets / pocs.**
 ### url
 example: `http://localhost`, `https://baidu.com`
 ### python

@@ -23,7 +23,7 @@ class Plugin(PluginParserBase):
                 result = (result, )
             return result
         except Exception:
-            return None
+            return ()
 
 
 register_plugin(Plugin)

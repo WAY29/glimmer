@@ -12,7 +12,7 @@ class Plugin(PluginParserBase):
             res = requests.get(module_path)
             return (res.text, )
         except Exception:
-            return None
+            return ()
 
 
 register_plugin(Plugin)
