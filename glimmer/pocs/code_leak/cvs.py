@@ -4,26 +4,26 @@ from urllib import parse
 
 class Poc(PocBase):
     """
-        this poc will check if target website exist .svn source leak
+        this poc will check if target website exist CVS source leak
     """
     vulid = "1"
     type = POC_TYPE.CODE_DISCLOSURE
     version = "1.0"
     authors = ['Longlone']
-    references = ["https://github.com/WAY29/ctfbox", "https://github.com/0xHJK/dumpall"]
-    name = ".svb code leak"
-    appName = "Svn"
+    references = ["https://github.com/kost/dvcs-ripper"]
+    name = "CVS code leak"
+    appName = "CVS"
     appVersion = "all"
 
     def check(self, url, **kwargs):
-        target_url = parse.urljoin(url, ".svn/entries")
-        res = requests.get(target_url, allow_redirects=False)
-        status = 0 if res.status_code == 200 else 1
+        target_url = parse.urljoin(url, "CVS/Root")
 
+        res = requests.get(target_url)
+        status = 0 if res.status_code == 403 else 1
         if not status:
-            msg = "exist .svn source leak"
+            msg = "exist CVS source leak"
         else:
-            msg = "not exist .svn source leak"
+            msg = "not exist CVS source leak"
         result = {
             "url": target_url,
             "status": status,

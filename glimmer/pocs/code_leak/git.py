@@ -12,7 +12,7 @@ class Poc(PocBase):
     authors = ['Longlone']
     references = ["https://github.com/WAY29/ctfbox", "https://github.com/0xHJK/dumpall"]
     name = ".git code leak"
-    appName = "git"
+    appName = "Git"
     appVersion = "all"
 
     def check(self, url, **kwargs):
@@ -25,7 +25,7 @@ class Poc(PocBase):
         else:
             msg = "not exist .git source leak"
         result = {
-            "url": url,
+            "url": target_url,
             "status": status,
             "msg": msg,
             "extra": {
