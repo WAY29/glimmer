@@ -2,9 +2,9 @@ from os import path
 
 import click
 
-from libs.controller import init, init_output_plugins, load_plugins, load_pocs, load_targets, start, load_config, end, init_plugins, enable_plugins, end_plugins
-from libs.core.config import ConfigHandler, POCS, CONFIG
-from utils import banner, cprint, header, print_traceback, get_full_exception_name
+from glimmer.libs.controller import init, init_output_plugins, load_plugins, load_pocs, load_targets, start, load_config, end, init_plugins, enable_plugins, end_plugins
+from glimmer.libs.core.config import POCS, CONFIG
+from glimmer.utils import banner, cprint, header, print_traceback, get_full_exception_name
 
 
 @click.group(invoke_without_command=True)
@@ -64,16 +64,20 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
 @click.option("--type", "-t", type=str, help="search pocs by input string.")
 @click.argument("pocs", nargs=-1)
 def show_poc_info(pocs, type=""):
+    """
+    Show poc information or search poc by poc type.
+    """
     if type:
         result = ", ".join(poc_name for poc_name,
-                           poc in POCS.instances.items() if type in poc.type)
+                           poc_s in POCS.instances.items() if any(type.lower() in poc.type.lower() for poc in poc_s))
         result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
         cprint("[yellow]Search result:[/]\n    " + result)
         return
     for poc_name in pocs:
         if poc_name in POCS.instances:
-            poc = POCS.instances[poc_name]
-            poc.show_info()
+            poc_s = POCS.instances[poc_name]
+            for poc in poc_s:
+                poc.show_info()
         else:
             cprint(header("", "-", "can't find %s" % poc_name))
 

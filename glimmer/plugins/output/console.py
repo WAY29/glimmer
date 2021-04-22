@@ -1,4 +1,4 @@
-from api import PluginOutputBase, register_plugin, cprint, header
+from glimmer.api import PluginOutputBase, register_plugin, cprint, header
 
 
 class Plugin(PluginOutputBase):
@@ -27,7 +27,8 @@ class Plugin(PluginOutputBase):
         if extra:
             msg += " extra: "
             msg += " ".join("%s:%s" % (k, v) for k, v in extra.items())
-        cprint(header("Poc", sign, msg))
+        if self.output_filter(status):
+            cprint(header("Poc", sign, msg))
 
 
 register_plugin(Plugin)

@@ -1,5 +1,5 @@
-from utils import cprint
-from libs.core.enums import POC_TYPE
+from glimmer.utils import cprint
+from glimmer.libs.core.enums import POC_TYPE
 
 
 class PocBase():
@@ -16,13 +16,19 @@ class PocBase():
     appVersion = ""
 
     def show_info(self):
+        vuln_app_info = ""
+        if self.appName:
+            vuln_app_info = "[red]Vulnable App[/]: %s" % self.appName
+            if self.appVersion:
+                vuln_app_info += " (%s)" % self.appVersion
         cprint("""
-%s [cyan]%s[/] - %s ([blue]%s[/])
-Authors: [yellow]%s[/yellow]
-References: [green]%s[/green]
-Vulnable App: [red]%s[/red] (%s)
-Description:
+[%s] [cyan]%s[/] - %s (%s)
+[yellow]Authors[/]: %s
+[magenta]References[/]: %s
+%s
+[blue]Description[/]:
   %s
 """ %
-               (self.vulid, self.name, self.version, self.type, ",".join(self.authors), "  ".join(self.references), self.appName, self.appVersion, self.__doc__.strip())
+               (self.vulid, self.name, self.version, self.type, ",".join(self.authors), "  ".join(
+                   self.references), vuln_app_info, self.__doc__.strip())
                )

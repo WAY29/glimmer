@@ -1,4 +1,4 @@
-from libs.core.config import PLUGINS, AttribDict
+from glimmer.libs.core.config import CONFIG, PLUGINS, AttribDict
 
 
 class PluginBase():
@@ -33,6 +33,9 @@ class PluginOutputBase(PluginBase):
 
     def handle(self, poc, result, **kwargs):
         ...
+
+    def output_filter(self, status):
+        return status != 0 and (CONFIG.option.get("debug", False) or CONFIG.option.get("verbose", False)) or (status == 0)
 
 
 CLASS_TO_NAME_DICT = {PluginOutputBase: "output", PluginParserBase: "parser"}

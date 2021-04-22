@@ -7,20 +7,19 @@ print_traceback = CONSOLE.print_exception
 
 def header(typ: str = "Base", sign: str = "", msg: str = "") -> str:
     if sign == "+":
-        sign = " [green][+][/green]"
+        sign = "[green][+][/]"
     elif sign == "-":
-        sign = " [red][-][/red]"
+        sign = "[red][-][/]"
     elif sign == "!":
-        sign = " [yellow][!][/yellow]"
+        sign = "[yellow][!][/]"
     elif sign == "*":
-        sign = " [cyan][*][/cyan]"
+        sign = "[cyan][*][/]"
     else:
-        sign = ""
+        sign = "[magenta][?][/]"
     if typ:
-        typ = "[cyan][%s][/cyan]" % typ
-    else:
-        sign = sign.strip()
-    return "%s%s %s" % (typ, sign, msg)
+        typ = "[cyan]%s[/]" % typ.strip()
+    s = "%s %-40s %s" % (sign, msg.strip(), typ)
+    return s
 
 
 __all__ = ["CONSOLE", "cprint", "header", "print_traceback"]

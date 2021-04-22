@@ -1,6 +1,6 @@
 import zoomeye.sdk as zoomeye
 
-from libs.core.exceptions import ParserExceptions
+from glimmer.libs.core.exceptions import ParserExceptions
 
 
 class ZoomeyeClient:

@@ -1,8 +1,9 @@
 import errno
-import os
-import sys
-import re
 import hashlib
+import os
+import re
+import sys
+from base64 import b64decode, b64encode
 
 ERROR_INVALID_NAME = 123
 __version__ = "1.0.0"
@@ -25,6 +26,14 @@ def get_md5(value):
     if isinstance(value, str):
         value = value.encode(encoding='UTF-8')
     return hashlib.md5(value).hexdigest()
+
+
+def base64_encode(s: str, encoding='utf-8') -> str:
+    return b64encode(s.encode()).decode(encoding=encoding)
+
+
+def base64_decode(s: str, encoding='utf-8') -> str:
+    return b64decode(s.encode()).decode(encoding=encoding)
 
 
 def get_full_exception_name(exc):

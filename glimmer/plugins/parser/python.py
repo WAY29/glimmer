@@ -1,4 +1,4 @@
-from api import PluginParserBase, register_plugin, catch_stdout, is_valid_pathname
+from glimmer.api import PluginParserBase, register_plugin, catch_stdout, is_valid_pathname, check_if_base64, base64_decode
 
 
 class Plugin(PluginParserBase):
@@ -17,11 +17,13 @@ class Plugin(PluginParserBase):
             result = s.getvalue().strip()
             if protocol == "pythons":
                 result = result.split()
+                result = [base64_decode(r) if check_if_base64(
+                    r) else r for r in result]
             else:
                 result = (result, )
             return result
         except Exception:
-            return None
+            return ()
 
 
 register_plugin(Plugin)

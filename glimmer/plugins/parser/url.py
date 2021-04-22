@@ -1,4 +1,4 @@
-from api import PluginParserBase, register_plugin, requests, is_valid_url
+from glimmer.api import PluginParserBase, register_plugin, requests, is_valid_url
 
 
 class Plugin(PluginParserBase):
@@ -12,7 +12,7 @@ class Plugin(PluginParserBase):
             res = requests.get(module_path)
             return (res.text, )
         except Exception:
-            return None
+            return ()
 
 
 register_plugin(Plugin)

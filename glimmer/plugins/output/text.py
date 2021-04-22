@@ -1,5 +1,4 @@
-from api import PluginOutputBase, register_plugin, cprint
-from utils.printer import header
+from glimmer.api import PluginOutputBase, register_plugin, cprint, header
 
 
 class Plugin(PluginOutputBase):
@@ -22,8 +21,9 @@ class Plugin(PluginOutputBase):
         if extra:
             msg += " extra: "
             msg += " ".join("%s:%s" % (k, v) for k, v in extra.items())
-        self._handler.write("[Poc] %s %s\n" % (sign, msg))
-        self._handler.flush()
+        if self.output_filter(status):
+            self._handler.write("[Poc] %s %s\n" % (sign, msg))
+            self._handler.flush()
 
     def destruct(self):
         self._handler.close()

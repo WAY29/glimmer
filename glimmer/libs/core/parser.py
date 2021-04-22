@@ -1,5 +1,5 @@
-from libs.core.exceptions import ParserExceptions
-from libs.core.config import PLUGINS
+from glimmer.libs.core.exceptions import ParserExceptions
+from glimmer.libs.core.config import PLUGINS
 
 
 def parse_path(path, excludes=()):

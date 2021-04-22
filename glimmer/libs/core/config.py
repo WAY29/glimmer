@@ -14,7 +14,6 @@ CONFIG
     - very_verbose 0
 
 PLUGINS
-    debug_messages ""
     messages ""
     instances {}
     enable_plugins_name ""
@@ -23,7 +22,6 @@ PLUGINS
         module
 
 POCS
-    debug_messages ""
     messages ""
     modules {}
     type:
