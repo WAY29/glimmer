@@ -3,7 +3,7 @@ from glimmer.api import PluginOutputBase, register_plugin, cprint, rich
 
 class Plugin(PluginOutputBase):
     def construct(self):
-        table = rich.table.Table(title="Result")
+        table = rich.table.Table(title="Result", show_lines=True)
         table.add_column("poc", style="magenta", justify="center")
         table.add_column("status", justify="center")
         table.add_column("message", justify="center")
