@@ -136,14 +136,15 @@ def load_config(config_path):
     if config_path and path.isfile(config_path):
         logger.info("load_config: load configuration from " + config_path)
     else:
-        logger.warning("load_config: config_path [%s] not found, use default config" % config_path)
-        config_path = path.abspath(path.join(CONFIG.base.root_path, "data", "default_config.ini"))
+        logger.warning(
+            "load_config: config_path [%s] not found, use default config" % config_path)
+        config_path = path.abspath(
+            path.join(CONFIG.base.root_path, "data", "default_config.ini"))
 
     config = ConfigHandler(config_path)
     CONFIG.base.configuration = config
     request_config = config.request
     CONFIG.base.request = request_config
-
 
 
 def load_targets(urls, files):
@@ -154,7 +155,9 @@ def load_targets(urls, files):
     # parse targets
     targets = [parse_path(target, ("parser.url",)) for target in targets]
     # list expand
-    targets = tuple(chain.from_iterable(targets))
+    if targets:
+        targets = tuple(chain.from_iterable(targets))
+
     CONFIG.base.targets = targets
 
     debug_msg = ""
@@ -167,7 +170,7 @@ def load_targets(urls, files):
         cprint(debug_msg)
     elif CONFIG.option.get("verbose", False):
         cprint(header("Load target", "+",
-                      "Loaded [%d] pocs" % len(targets)))
+                      "Loaded [%d] targets" % len(targets)))
 
 
 def load_pocs(pocs=[], poc_files=[], pocs_path=""):
@@ -312,10 +315,11 @@ def init(root_path, verbose, very_verbose, debug):
 def start(threads, timeout):
     logger.info("start: start program")
     targets = CONFIG.base.targets
+    cprint(targets)
     tasks_queue = Queue()
     results = {}
     pocs = [poc_s for poc_s in POCS.instances.values()]
-    pocs = chain.from_iterable(pocs)
+    pocs = tuple(chain.from_iterable(pocs))
     for target in targets:
         results[target] = {}
         for poc in pocs:
