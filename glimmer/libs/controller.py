@@ -189,7 +189,7 @@ def load_pocs(pocs=[], poc_files=[], pocs_path=""):
     instances = POCS.instances
     count_dict = {}
     if not pocs and not poc_files:
-        pocs = [poc for poc in glob(str(pocs_path / "**" / "*.py"))]
+        pocs = [poc for poc in glob(str(pocs_path / "**" / "*.py")) if not poc.split("/")[-2].startswith("_")]
     else:
         pocs = _load_from_links_and_files(pocs, poc_files)
     for poc in pocs:
@@ -242,8 +242,9 @@ def load_plugins(plugins_path):
                         "plugins") if not plugins_path else Path(plugins_path)
     detail_msgs = ""
     count_dict = {}
+    plugins = [plugin for plugin in glob(str(plugins_path / "**" / "*.py")) if not plugin.split("/")[-2].startswith("_")]
 
-    for f in glob(str(plugins_path / "**" / "*.py")):
+    for f in plugins:
         filename = path.basename(f)
         fname, _ = path.splitext(filename)
         plugin_type_dir = path.basename(path.dirname(f))
