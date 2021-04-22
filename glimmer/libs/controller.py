@@ -176,7 +176,6 @@ def load_targets(urls, files):
 def load_pocs(pocs=[], poc_files=[], pocs_path=""):
     pocs_path = Path(CONFIG.base.root_path /
                      "pocs") if not pocs_path else Path(pocs_path)
-    debug_msg = ""
     msg = ""
     instances = POCS.instances
     count_dict = {}
@@ -214,18 +213,15 @@ def load_pocs(pocs=[], poc_files=[], pocs_path=""):
         else:
             msg += load_msg
             logger_func = logger.error
-        debug_msg += load_msg
-
+        if CONFIG.option.get("very_verbose", False):
+            cprint(load_msg)
         logger_func(load_msg, extra={"markup": True})
 
     msg = "\n".join(header("Load %s poc" % k, "+",
                     "Loaded [%d] pocs" % v) for k, v in count_dict.items()) + msg + "\n"
     POCS.messages = msg
-    POCS.debug_messages = debug_msg
 
-    if CONFIG.option.get("very_verbose", False):
-        cprint(debug_msg)
-    elif CONFIG.option.get("verbose", False):
+    if CONFIG.option.get("verbose", False):
         cprint(msg)
 
 
@@ -234,7 +230,6 @@ def load_plugins(plugins_path):
     plugins_path = Path(CONFIG.base.root_path /
                         "plugins") if not plugins_path else Path(plugins_path)
     msg = ""
-    debug_msg = ""
     count_dict = {}
 
     for f in glob(str(plugins_path / "**" / "*.py")):
@@ -245,7 +240,6 @@ def load_plugins(plugins_path):
             import_module("plugins.%s.%s" % (plugin_type_dir, fname))
             temp_msg = header("Load plugin", "+", "load plugin %s.%s \n" %
                               (plugin_type_dir, fname))
-            debug_msg += temp_msg
             if plugin_type_dir not in count_dict:
                 count_dict[plugin_type_dir] = 0
             count_dict[plugin_type_dir] += 1
@@ -254,18 +248,18 @@ def load_plugins(plugins_path):
         except ImportError as e:
             temp_msg = header("Load plugin", "-", "load plugin %s.%s error: " %
                               (plugin_type_dir, fname) + str(e) + "\n")
-            debug_msg += temp_msg
             msg += temp_msg
 
             logger.error(temp_msg, extra={"markup": True})
+        if CONFIG.option.get("very_verbose", False):
+            cprint(temp_msg)
 
     msg = "\n".join(header("Load %s plugin" % k, "+",
                     "Loaded [%d] plugins" % v) for k, v in count_dict.items()) + msg + "\n"
     PLUGINS.messages = msg
-    PLUGINS.debug_messages = debug_msg
-    if CONFIG.option.get("very_verbose", False):
-        cprint(debug_msg)
-    elif CONFIG.option.get("verbose", False):
+    # PLUGINS.debug_messages = debug_msg
+
+    if CONFIG.option.get("verbose", False):
         cprint(msg)
 
 
