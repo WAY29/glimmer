@@ -38,10 +38,14 @@ def _set_config(root_path, verbose, very_verbose, debug):
     CONFIG.base.root_path = Path(root_path)
     # set verbose flag
     logger.info("_set_config: set verbose flag")
+    if very_verbose:
+        verbose = True
+    if debug:
+        very_verbose = False
+        verbose = False
     CONFIG.option.verbose = verbose
     CONFIG.option.very_verbose = very_verbose
     CONFIG.option.debug = debug
-    ...
 
 
 def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
