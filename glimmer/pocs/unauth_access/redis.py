@@ -34,9 +34,10 @@ class Poc(PocBase):
             msg = "not exist redis unauthorized access"
 
         result = {
-            "url": "tcp://%s:6379/" % hostname,
+            "url": url,
             "status": status,
             "msg": msg,
+            "hit_urls": ["tcp://%s:6379/" % hostname],
             "extra": {
             }
         }

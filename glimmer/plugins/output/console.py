@@ -9,6 +9,7 @@ class Plugin(PluginOutputBase):
             'url': 'http://baidu.com',
             'status': 0,
             'msg': 'demo2 poc success',
+            'hit_urls': ['http://baidu.com', ],
             'extra': {}
         }
         """
@@ -22,8 +23,8 @@ class Plugin(PluginOutputBase):
             sign = "!"
 
         extra = result.get('extra', {})
-        msg = '[cyan]%s[/cyan] %s (%s)' % (poc.name,
-                                           result.get("msg", ""), result.get("url"))
+        msg = '[cyan]%s[/cyan] %s <- %s (%s)' % (poc.name,
+                                                 result.get("msg", ""), ",".join(result.get("hit_urls"), []), result.get("url"))
         if extra:
             msg += " extra: "
             msg += " ".join("%s:%s" % (k, v) for k, v in extra.items())

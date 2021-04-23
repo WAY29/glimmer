@@ -64,7 +64,7 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
 @click.argument("pocs", nargs=-1)
 def show_poc_info(pocs):
     """
-    Show poc information.
+    Show poc information by poc filename.
     """
 
     for poc_name in pocs:

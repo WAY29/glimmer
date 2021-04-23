@@ -57,6 +57,7 @@ class Poc(PocBase):
             "url": url,
             "status": status,
             "msg": msg,
+            "hit_urls": [parse.urljoin(url, exist_file) for exist_file in exist_files],
             "extra": {
             }
         }

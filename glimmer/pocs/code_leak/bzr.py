@@ -33,6 +33,7 @@ class Poc(PocBase):
 
     def check(self, url, **kwargs):
         target_url = parse.urljoin(url, ".bzr") + "/"
+        hit_urls = []
 
         res = session.get(target_url)
         status = 1
@@ -42,6 +43,7 @@ class Poc(PocBase):
                 t_url = parse.urljoin(target_url, f)
                 res = session.get(t_url)
                 if res.status_code == 200:
+                    hit_urls.append(t_url)
                     status = 0
                     break
         if not status:
@@ -54,6 +56,7 @@ class Poc(PocBase):
             "url": url,
             "status": status,
             "msg": msg,
+            "hit_urls": hit_urls,
             "extra": {
             }
         }
