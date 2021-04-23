@@ -25,9 +25,10 @@ class Poc(PocBase):
         else:
             msg = "not exist robots.txt information leak"
         result = {
-            "url": target_url,
+            "url": url,
             "status": status,
             "msg": msg,
+            "hit_urls": [target_url],
             "extra": {
             }
         }

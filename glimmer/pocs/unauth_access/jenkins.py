@@ -22,13 +22,13 @@ class Poc(PocBase):
         parsed[1] = re.sub(r":\d+", ":8080", parsed[1]) if ":" in parsed[1] else parsed[1] + ":8080"
         parsed[2] = "/manage"
         default_url = parse.urlunparse(parsed)
-        final_url = url
+        target_url = url
         for target_url in (url, default_url):
             manage_url = parse.urljoin(target_url, "manage")
             res = session.get(manage_url)
             if res.request.url == manage_url and "Jenkins [Jenkins]</title>" in res.text:
                 status = 0
-                final_url = manage_url
+                target_url = manage_url
                 break
 
         if not status:
@@ -37,9 +37,10 @@ class Poc(PocBase):
             msg = "not exist jenkins unauthorized access"
 
         result = {
-            "url": final_url,
+            "url": url,
             "status": status,
             "msg": msg,
+            "hit_urls": [target_url],
             "extra": {
             }
         }
