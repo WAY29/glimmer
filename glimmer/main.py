@@ -61,18 +61,12 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
 
 
 @main.command()
-@click.option("--type", "-t", type=str, help="search pocs by input string.")
 @click.argument("pocs", nargs=-1)
-def show_poc_info(pocs, type=""):
+def show_poc_info(pocs):
     """
-    Show poc information or search poc by poc type.
+    Show poc information.
     """
-    if type:
-        result = ", ".join(poc_name for poc_name,
-                           poc_s in POCS.instances.items() if any(type.lower() in poc.type.lower() for poc in poc_s))
-        result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
-        cprint("[yellow]Search result:[/]\n    " + result)
-        return
+
     for poc_name in pocs:
         if poc_name in POCS.instances:
             poc_s = POCS.instances[poc_name]
@@ -80,6 +74,31 @@ def show_poc_info(pocs, type=""):
                 poc.show_info()
         else:
             cprint(header("", "-", "can't find %s" % poc_name))
+
+
+@main.command()
+@click.option("--type", "-t", type=str, help="search pocs with input string by type.")
+@click.option("--filename", "-fn", type=str, help="search pocs with input string by poc filename.")
+@click.option("--name", "-n", type=str, help="search pocs with input string by poc name.")
+def search_poc(type="", filename="", name=""):
+    """
+    Search pocs by poc type / poc name / poc filename.
+    """
+    if type:
+        result = ", ".join(poc_name for poc_name,
+                           poc_s in POCS.instances.items() if any(type.lower() in poc.type.lower() for poc in poc_s))
+        result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
+        cprint("[yellow]Search result:[/]\n    " + result)
+    elif filename:
+        result = ", ".join(poc_name for poc_name,
+                           _ in POCS.instances.items() if filename.lower() in poc_name.lower())
+        result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
+        cprint("[yellow]Search result:[/]\n    " + result)
+    elif name:
+        result = ", ".join(poc_name for poc_name,
+                           poc_s in POCS.instances.items() if any(name.lower() in poc.name.lower() for poc in poc_s))
+        result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
+        cprint("[yellow]Search result:[/]\n    " + result)
 
 
 if __name__ == "__main__":
