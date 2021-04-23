@@ -87,18 +87,15 @@ def search_poc(type="", filename="", name=""):
     if type:
         result = ", ".join(poc_name for poc_name,
                            poc_s in POCS.instances.items() if any(type.lower() in poc.type.lower() for poc in poc_s))
-        result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
-        cprint("[yellow]Search result:[/]\n    " + result)
     elif filename:
         result = ", ".join(poc_name for poc_name,
                            _ in POCS.instances.items() if filename.lower() in poc_name.lower())
-        result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
-        cprint("[yellow]Search result:[/]\n    " + result)
     elif name:
         result = ", ".join(poc_name for poc_name,
                            poc_s in POCS.instances.items() if any(name.lower() in poc.name.lower() for poc in poc_s))
-        result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
-        cprint("[yellow]Search result:[/]\n    " + result)
+
+    result = "[cyan]%s[/]" % result if result else "[red]No result[/]"
+    cprint("[yellow]Search result:[/]\n    " + result)
 
 
 if __name__ == "__main__":
