@@ -11,5 +11,7 @@ from glimmer.thirdparty.parser import catch_stdout
 from glimmer.utils import cprint, header, is_valid_pathname, is_valid_url, cyberspace, base64_decode, base64_encode
 import rich
 
+session = requests.Session()
+
 __all__ = ["requests", "PluginBase", "PluginLoaderBase", "PluginOutputBase", "PluginParserBase",
-           "PocBase", "register_plugin", "cprint", "header", "logger", "POC_TYPE", "catch_stdout", "is_valid_pathname", "is_valid_url", "CONFIG", "ParserExceptions", "cyberspace", "check_if_base64", "base64_encode", "base64_decode", "rich"]
+           "PocBase", "register_plugin", "cprint", "header", "logger", "POC_TYPE", "catch_stdout", "is_valid_pathname", "is_valid_url", "CONFIG", "ParserExceptions", "cyberspace", "check_if_base64", "base64_encode", "base64_decode", "rich", "session"]
