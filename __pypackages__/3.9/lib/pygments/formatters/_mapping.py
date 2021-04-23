@@ -32,13 +32,12 @@ FORMATTERS = {
 }
 
 if __name__ == '__main__':  # pragma: no cover
-    import sys
     import os
 
     # lookup formatters
     found_formatters = []
     imports = []
-    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+    # sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
     from pygments.util import docstring_headline
 
     for root, dirs, files in os.walk('.'):

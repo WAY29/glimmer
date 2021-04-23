@@ -45,6 +45,12 @@ marker = "python_version >= '3.6' and python_version < '3.7'"
 summary = "A backport of the dataclasses module for Python 3.6"
 
 [[package]]
+name = "func-timeout"
+sections = ["default"]
+version = "4.3.5"
+summary = "Python module which allows you to specify timeouts when calling any existing function. Also provides support for stoppable-threads"
+
+[[package]]
 name = "idna"
 sections = ["default"]
 version = "2.10"
@@ -124,7 +130,7 @@ dependencies = [
 
 [metadata]
 lock_version = "2"
-content_hash = "sha256:33030a5fae1139b463d033b73fb7b63cf9e1770b66b8097e755085aef21880a9"
+content_hash = "sha256:69cd4bbbb84f54420b61a69525b2a02a5d15ef8898acda09c89c40b7c7e2cf00"
 
 [metadata.files]
 "certifi 2020.12.5" = [
@@ -154,6 +160,9 @@ content_hash = "sha256:33030a5fae1139b463d033b73fb7b63cf9e1770b66b8097e755085aef
 "dataclasses 0.8" = [
     {file = "dataclasses-0.8-py3-none-any.whl", hash = "sha256:0201d89fa866f68c8ebd9d08ee6ff50c0b255f8ec63a71c16fda7af82bb887bf"},
     {file = "dataclasses-0.8.tar.gz", hash = "sha256:8479067f342acf957dc82ec415d355ab5edb7e7646b90dc6e2fd1d96ad084c97"},
+]
+"func-timeout 4.3.5" = [
+    {file = "func_timeout-4.3.5.tar.gz", hash = "sha256:74cd3c428ec94f4edfba81f9b2f14904846d5ffccc27c92433b8b5939b5575dd"},
 ]
 "idna 2.10" = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
