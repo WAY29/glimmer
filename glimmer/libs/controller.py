@@ -1,14 +1,14 @@
 from glob import glob
 from os import path
-from sys import path as sys_path
 from pathlib import Path
-from queue import Queue, Empty
+from queue import Queue as normal_queue, Empty
 from time import strftime
 from itertools import chain
-from concurrent.futures import ThreadPoolExecutor
+from threading import Thread
 
 from click import UsageError
 from rich.progress import Progress, SpinnerColumn, BarColumn
+from func_timeout import func_timeout, FunctionTimedOut
 
 from glimmer.libs.core.parser import parse_path
 from glimmer.utils import cprint, header, CONSOLE, print_traceback
@@ -16,7 +16,7 @@ from glimmer.libs.request import patch_request
 from glimmer.libs.logger import init_logger, logger
 from glimmer.libs.core.loader import load_modules
 from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
-from glimmer.libs.core.exceptions import ModuleLoadExceptions
+from glimmer.libs.core.exceptions import ModuleLoadExceptions, WorkExceptions
 
 
 def _verify_poc(module):
@@ -34,7 +34,6 @@ def _verify_poc(module):
 def _set_config(root_path, verbose, very_verbose, debug):
     # set root_path
     logger.info("_set_config: set root_path")
-    sys_path.insert(0, root_path)
     CONFIG.base.root_path = Path(root_path)
     # set verbose flag
     logger.info("_set_config: set verbose flag")
@@ -60,13 +59,22 @@ def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
         return modules, msg
 
 
-def _work(tasks_queue, results_queue):
+def _work(tasks_queue, results_queue, timeout):
     while not tasks_queue.empty():
-        target, poc = tasks_queue.get()
         try:
-            res = poc.check(target)
+            target, poc = tasks_queue.get_nowait()
+        except Empty:
+            break
+        try:
+            res = func_timeout(timeout, poc.check, args=(target, ))
+        except FunctionTimedOut:
+            res = {"url": target,
+                   "status": -1,
+                   "msg": "timeout",
+                   "extra": {}
+                   }
         except Exception as err:
-            res = {"url": "",
+            res = {"url": target,
                    "status": -1,
                    "msg": "work error: " + str(err),
                    "extra": {}
@@ -77,43 +85,44 @@ def _work(tasks_queue, results_queue):
 
 
 def _run(threads, tasks_queue, results, timeout, output_handlers):
-    results_queue = Queue()
+    results_queue = normal_queue()
     finish_tasks_num = 0
     tasks_num = tasks_queue.qsize()
-    with ThreadPoolExecutor(threads) as pool, Progress(SpinnerColumn(), "{task.description}", BarColumn(), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
-        def _update_progress_bar():
-            # update bar
-            if not CONFIG.option.debug:
-                bar.update(bar_task, advance=1)
-
+    with Progress(SpinnerColumn(), "{task.description}", BarColumn(complete_style="cyan"), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
         # create bar_task
         if not CONFIG.option.debug:
             bar_task = bar.add_task("[cyan]testing", total=tasks_queue.qsize())
         # create futures
-        _ = [pool.submit(_work, tasks_queue, results_queue)
-             for _ in range(threads)]
+        tasks = [Thread(target=_work, args=(
+            tasks_queue, results_queue, timeout)) for _ in range(threads)]
+        for task in tasks:
+            task.daemon = True
+            task.start()
         # get result as completed
-        while finish_tasks_num < tasks_num:
-            try:
-                target, poc, poc_result = results_queue.get(True, timeout)
-            except Empty:
-                finish_tasks_num += 1
-                _update_progress_bar()
-                continue
-            if target and poc and poc_result:
-                finish_tasks_num += 1
-                _update_progress_bar()
+        try:
+            while finish_tasks_num < tasks_num:
+                try:
+                    target, poc, poc_result = results_queue.get(True, timeout)
+                except Empty:
+                    continue
+                if target and poc and poc_result:
+                    finish_tasks_num += 1
+                    if not CONFIG.option.debug:
+                        bar.update(bar_task, advance=1)
 
-                status = poc_result.get("status", -1)
-                if status == 0:
-                    logger_func = logger.info
-                else:
-                    logger_func = logger.error
-                logger_func("_run: done poc: %s for %s" % (poc.name, target))
+                    status = poc_result.get("status", -1)
+                    if status == 0:
+                        logger_func = logger.info
+                    else:
+                        logger_func = logger.error
+                    logger_func("_run: done poc: %s for %s" %
+                                (poc.name, target))
 
-                results[target][poc.name] = poc_result
-                # handle result
-                _output(output_handlers, poc, poc_result)
+                    results[target][poc.name] = poc_result
+                    # handle result
+                    _output(output_handlers, poc, poc_result)
+        except KeyboardInterrupt:
+            tasks_queue.queue.clear()
     return results
 
 
@@ -166,7 +175,7 @@ def load_targets(urls, files):
 
     detail_msgs = ""
     for target in targets:
-        temp_msg = header("Load target", "*", target)
+        temp_msg = header("Load target", "*", target) + "\n"
         logger.info(temp_msg, extra={"markup": True})
         detail_msgs += temp_msg
 
@@ -189,7 +198,8 @@ def load_pocs(pocs=[], poc_files=[], pocs_path=""):
     instances = POCS.instances
     count_dict = {}
     if not pocs and not poc_files:
-        pocs = [poc for poc in glob(str(pocs_path / "**" / "*.py")) if not poc.split("/")[-2].startswith("_")]
+        pocs = [poc for poc in glob(
+            str(pocs_path / "**" / "*.py")) if not poc.split("/")[-2].startswith("_")]
     else:
         pocs = _load_from_links_and_files(pocs, poc_files)
     for poc in pocs:
@@ -242,7 +252,8 @@ def load_plugins(plugins_path):
                         "plugins") if not plugins_path else Path(plugins_path)
     detail_msgs = ""
     count_dict = {}
-    plugins = [plugin for plugin in glob(str(plugins_path / "**" / "*.py")) if not plugin.split("/")[-2].startswith("_")]
+    plugins = [plugin for plugin in glob(
+        str(plugins_path / "**" / "*.py")) if not plugin.split("/")[-2].startswith("_")]
 
     for f in plugins:
         filename = path.basename(f)
@@ -322,7 +333,7 @@ def init(root_path, verbose, very_verbose, debug):
 def start(threads, timeout):
     logger.info("start: start program")
     targets = CONFIG.base.targets
-    tasks_queue = Queue()
+    tasks_queue = normal_queue()
     results = {}
     pocs = [poc_s for poc_s in POCS.instances.values()]
     pocs = tuple(chain.from_iterable(pocs))
