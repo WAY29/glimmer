@@ -1,14 +1,14 @@
 from glob import glob
 from os import path
-from sys import path as sys_path
 from pathlib import Path
-from queue import Queue, Empty
+from queue import Queue as normal_queue, Empty
 from time import strftime
 from itertools import chain
 from threading import Thread
 
 from click import UsageError
 from rich.progress import Progress, SpinnerColumn, BarColumn
+from func_timeout import func_timeout, FunctionTimedOut
 
 from glimmer.libs.core.parser import parse_path
 from glimmer.utils import cprint, header, CONSOLE, print_traceback
@@ -16,7 +16,7 @@ from glimmer.libs.request import patch_request
 from glimmer.libs.logger import init_logger, logger
 from glimmer.libs.core.loader import load_modules
 from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
-from glimmer.libs.core.exceptions import ModuleLoadExceptions
+from glimmer.libs.core.exceptions import ModuleLoadExceptions, WorkExceptions
 
 
 def _verify_poc(module):
@@ -34,7 +34,6 @@ def _verify_poc(module):
 def _set_config(root_path, verbose, very_verbose, debug):
     # set root_path
     logger.info("_set_config: set root_path")
-    sys_path.insert(0, root_path)
     CONFIG.base.root_path = Path(root_path)
     # set verbose flag
     logger.info("_set_config: set verbose flag")
@@ -60,16 +59,22 @@ def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
         return modules, msg
 
 
-def _work(tasks_queue, results_queue):
+def _work(tasks_queue, results_queue, timeout):
     while not tasks_queue.empty():
         try:
             target, poc = tasks_queue.get_nowait()
         except Empty:
             break
         try:
-            res = poc.check(target)
+            res = func_timeout(timeout, poc.check, args=(target, ))
+        except FunctionTimedOut:
+            res = {"url": target,
+                   "status": -1,
+                   "msg": "timeout",
+                   "extra": {}
+                   }
         except Exception as err:
-            res = {"url": "",
+            res = {"url": target,
                    "status": -1,
                    "msg": "work error: " + str(err),
                    "extra": {}
@@ -80,20 +85,16 @@ def _work(tasks_queue, results_queue):
 
 
 def _run(threads, tasks_queue, results, timeout, output_handlers):
-    results_queue = Queue()
+    results_queue = normal_queue()
     finish_tasks_num = 0
     tasks_num = tasks_queue.qsize()
     with Progress(SpinnerColumn(), "{task.description}", BarColumn(complete_style="cyan"), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
-        def _update_progress_bar(bar_task):
-            # update bar
-            if not CONFIG.option.debug:
-                bar.update(bar_task, advance=1)
-
         # create bar_task
         if not CONFIG.option.debug:
             bar_task = bar.add_task("[cyan]testing", total=tasks_queue.qsize())
         # create futures
-        tasks = [Thread(target=_work, args=(tasks_queue, results_queue)) for _ in range(threads)]
+        tasks = [Thread(target=_work, args=(
+            tasks_queue, results_queue, timeout)) for _ in range(threads)]
         for task in tasks:
             task.daemon = True
             task.start()
@@ -106,7 +107,8 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
                     continue
                 if target and poc and poc_result:
                     finish_tasks_num += 1
-                    _update_progress_bar(bar_task)
+                    if not CONFIG.option.debug:
+                        bar.update(bar_task, advance=1)
 
                     status = poc_result.get("status", -1)
                     if status == 0:
@@ -331,7 +333,7 @@ def init(root_path, verbose, very_verbose, debug):
 def start(threads, timeout):
     logger.info("start: start program")
     targets = CONFIG.base.targets
-    tasks_queue = Queue()
+    tasks_queue = normal_queue()
     results = {}
     pocs = [poc_s for poc_s in POCS.instances.values()]
     pocs = tuple(chain.from_iterable(pocs))
