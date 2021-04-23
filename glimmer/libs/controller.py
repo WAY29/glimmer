@@ -83,8 +83,8 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
     results_queue = Queue()
     finish_tasks_num = 0
     tasks_num = tasks_queue.qsize()
-    with Progress(SpinnerColumn(), "{task.description}", BarColumn(), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
-        def _update_progress_bar():
+    with Progress(SpinnerColumn(), "{task.description}", BarColumn(complete_style="cyan"), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
+        def _update_progress_bar(bar_task):
             # update bar
             if not CONFIG.option.debug:
                 bar.update(bar_task, advance=1)
@@ -97,20 +97,16 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
         for task in tasks:
             task.daemon = True
             task.start()
-        for task in tasks:
-            task.join()
         # get result as completed
         try:
             while finish_tasks_num < tasks_num:
                 try:
                     target, poc, poc_result = results_queue.get(True, timeout)
                 except Empty:
-                    finish_tasks_num += 1
-                    _update_progress_bar()
                     continue
                 if target and poc and poc_result:
                     finish_tasks_num += 1
-                    _update_progress_bar()
+                    _update_progress_bar(bar_task)
 
                     status = poc_result.get("status", -1)
                     if status == 0:
@@ -177,7 +173,7 @@ def load_targets(urls, files):
 
     detail_msgs = ""
     for target in targets:
-        temp_msg = header("Load target", "*", target)
+        temp_msg = header("Load target", "*", target) + "\n"
         logger.info(temp_msg, extra={"markup": True})
         detail_msgs += temp_msg
 
