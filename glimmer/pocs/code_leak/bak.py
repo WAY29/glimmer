@@ -1,4 +1,4 @@
-from glimmer.api import PocBase, POC_TYPE, requests
+from glimmer.api import PocBase, POC_TYPE, session
 from urllib import parse
 
 
@@ -45,7 +45,7 @@ class Poc(PocBase):
         exist_files = []
         for f in known_files:
             t_url = parse.urljoin(url, f)
-            res = requests.get(t_url)
+            res = session.get(t_url)
             if res.status_code == 200:
                 status = 0
                 exist_files.append(f)
@@ -57,6 +57,7 @@ class Poc(PocBase):
             "url": url,
             "status": status,
             "msg": msg,
+            "hit_urls": [parse.urljoin(url, exist_file) for exist_file in exist_files],
             "extra": {
             }
         }

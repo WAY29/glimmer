@@ -1,4 +1,4 @@
-from glimmer.api import PocBase, POC_TYPE, requests
+from glimmer.api import PocBase, POC_TYPE, session
 from urllib import parse
 
 
@@ -38,16 +38,18 @@ class Poc(PocBase):
 
     def check(self, url, **kwargs):
         target_url = parse.urljoin(url, ".hg") + "/"
+        hit_urls = []
 
-        res = requests.get(target_url)
+        res = session.get(target_url)
         status = 1
         pre_status = 0 if res.status_code == 403 else 1
         if not pre_status:
             for f in known_files:
                 t_url = parse.urljoin(target_url, f)
-                res = requests.get(t_url)
+                res = session.get(t_url)
                 if res.status_code == 200:
                     status = 0
+                    hit_urls.append(t_url)
                     break
         if not status:
             msg = "exist .hg source leak"
@@ -59,6 +61,7 @@ class Poc(PocBase):
             "url": url,
             "status": status,
             "msg": msg,
+            "hit_urls": hit_urls,
             "extra": {
             }
         }
