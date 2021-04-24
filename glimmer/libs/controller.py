@@ -34,7 +34,7 @@ def _verify_poc(module):
 def _set_config(root_path, verbose, very_verbose, debug):
     # set root_path
     logger.info("_set_config: set root_path")
-    CONFIG.base.root_path = Path(root_path)
+    CONFIG.base.root_path = Path(root_path) / "glimmer"
     # set verbose flag
     logger.info("_set_config: set verbose flag")
     if very_verbose:
@@ -260,7 +260,7 @@ def load_plugins(plugins_path):
         fname, _ = path.splitext(filename)
         plugin_type_dir = path.basename(path.dirname(f))
         try:
-            import_module("plugins.%s.%s" % (plugin_type_dir, fname))
+            import_module("glimmer.plugins.%s.%s" % (plugin_type_dir, fname))
             temp_msg = header("Load plugin", "+", "load plugin %s.%s \n" %
                               (plugin_type_dir, fname))
             if plugin_type_dir not in count_dict:
