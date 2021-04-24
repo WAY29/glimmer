@@ -16,7 +16,7 @@ from glimmer.libs.request import patch_request
 from glimmer.libs.logger import init_logger, logger
 from glimmer.libs.core.loader import load_modules
 from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
-from glimmer.libs.core.exceptions import ModuleLoadExceptions, WorkExceptions
+from glimmer.libs.core.exceptions import ModuleLoadExceptions
 
 
 def _verify_poc(module):

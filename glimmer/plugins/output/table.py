@@ -28,7 +28,7 @@ class Plugin(PluginOutputBase):
             extra_str = " ".join("%s:%s" % (k, v) for k, v in extra.items())
         if self.output_filter(status):
             table.add_row(poc.name, status_msg, result.get(
-                "msg", ""), ",".join(result.get("hit_urls"), []), result.get("url"), extra_str)
+                "msg", ""), ",".join(result.get("hit_urls", [])), result.get("url"), extra_str)
 
     def destruct(self):
         if self._table.row_count > 0:
