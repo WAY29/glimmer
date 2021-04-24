@@ -7,7 +7,7 @@ class Plugin(PluginOutputBase):
 
     def handle(self, poc, result, **kwargs):
         status = result.get('status', -1)
-        write_urls = "\n".join(result.get("hit_urls"), [])
+        write_urls = "\n".join(result.get("hit_urls", []))
         if write_urls:
             write_urls += "\n"
 

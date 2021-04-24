@@ -17,7 +17,7 @@ class Plugin(PluginOutputBase):
 
         extra = result.get('extra', {})
         msg = '[cyan]%s[/cyan] %s <- %s (%s)' % (poc.name,
-                                                 result.get("msg", ""), ",".join(result.get("hit_urls"), []), result.get("url"))
+                                                 result.get("msg", ""), ",".join(result.get("hit_urls", [])), result.get("url"))
         if extra:
             msg += " extra: "
             msg += " ".join("%s:%s" % (k, v) for k, v in extra.items())
