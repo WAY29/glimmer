@@ -16,7 +16,7 @@ from glimmer.utils import banner, cprint, header, print_traceback, get_full_exce
 @click.option("--pocs_path", help="User custom poc dir.")
 @click.option("--out", "-o", default=["console", ], multiple=True, help="Use output plugins. default is console")
 @click.option("--plugins_path", help="User custom output plugin dir.")
-@click.option("--threads", type=int, default=10)
+@click.option("--threads", type=int, help="Number of threads", default=10)
 @click.option("--config", "-c", type=str, help="Load config from a configuration toml file.")
 @click.option("--timeout", "-t", default=300, help="Max program runtime.")
 @click.option("--verbose", "-v", count=True, help="display verbose information.")
