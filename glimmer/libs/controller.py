@@ -1,5 +1,5 @@
 from glob import glob
-from os import path
+from os import path, sep as SEP
 from pathlib import Path
 from queue import Queue as normal_queue, Empty
 from time import strftime
@@ -199,7 +199,7 @@ def load_pocs(pocs=[], poc_files=[], pocs_path=""):
     count_dict = {}
     if not pocs and not poc_files:
         pocs = [poc for poc in glob(
-            str(pocs_path / "**" / "*.py")) if not poc.split("/")[-2].startswith("_")]
+            str(pocs_path / "**" / "*.py")) if not poc.split(SEP)[-2].startswith("_")]
     else:
         pocs = _load_from_links_and_files(pocs, poc_files)
     for poc in pocs:
@@ -253,7 +253,7 @@ def load_plugins(plugins_path):
     detail_msgs = ""
     count_dict = {}
     plugins = [plugin for plugin in glob(
-        str(plugins_path / "**" / "*.py")) if not plugin.split("/")[-2].startswith("_")]
+        str(plugins_path / "**" / "*.py")) if not plugin.split(SEP)[-2].startswith("_")]
 
     for f in plugins:
         filename = path.basename(f)
