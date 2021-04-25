@@ -35,7 +35,9 @@ class PluginOutputBase(PluginBase):
         ...
 
     def output_filter(self, status):
-        return status != 0 and (CONFIG.option.get("debug", False) or CONFIG.option.get("verbose", False)) or (status == 0)
+        debug = CONFIG.option.get("debug", False)
+        verbose = CONFIG.option.get("verbose", False)
+        return (status in (0, -1)) or debug or verbose
 
 
 CLASS_TO_NAME_DICT = {PluginOutputBase: "output", PluginParserBase: "parser"}
