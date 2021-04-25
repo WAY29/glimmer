@@ -12,10 +12,15 @@ Current version: 1.3.1
 
 ## Install
 ```bash
+pip3 install -U python-glimmer
+glimmer --help
+```
+or
+```bash
 git clone https://github.com/WAY29/glimmer.git
 cd glimmer
 python3 -m pip install -r requirements.txt
-python3 main.py --help
+python3 glimmer/main.py --help
 ```
 
 ## Usage
