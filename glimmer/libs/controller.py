@@ -31,7 +31,7 @@ def _verify_poc(module):
             "non-existent method: Poc.check")
 
 
-def _set_config(root_path, verbose, very_verbose, debug):
+def _set_config(root_path, verbose, very_verbose, debug, attack):
     # set root_path
     logger.info("_set_config: set root_path")
     CONFIG.base.root_path = Path(root_path) / "glimmer"
@@ -45,6 +45,7 @@ def _set_config(root_path, verbose, very_verbose, debug):
     CONFIG.option.verbose = verbose
     CONFIG.option.very_verbose = very_verbose
     CONFIG.option.debug = debug
+    POCS.type = "attack" if attack else "check"
 
 
 def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
@@ -66,17 +67,24 @@ def _work(tasks_queue, results_queue, timeout):
         except Empty:
             break
         try:
-            res = func_timeout(timeout, poc.check, args=(target, ))
+            if POCS.type == "attack":
+                func = poc.attack
+            else:
+                func = poc.check
+
+            res = func_timeout(timeout, func, args=(target, ))
         except FunctionTimedOut:
             res = {"url": target,
                    "status": -1,
                    "msg": "timeout",
+                   "hit_urls": [],
                    "extra": {}
                    }
         except Exception as err:
             res = {"url": target,
                    "status": -1,
                    "msg": "work error: " + str(err),
+                   "hit_urls": [],
                    "extra": {}
                    }
             if CONFIG.option.debug:
@@ -320,10 +328,10 @@ def end_plugins():
             plg.destruct()
 
 
-def init(root_path, verbose, very_verbose, debug):
+def init(root_path, verbose, very_verbose, debug, attack):
     init_logger(debug)
 
-    _set_config(root_path, verbose, very_verbose, debug)
+    _set_config(root_path, verbose, very_verbose, debug, attack)
 
     patch_request()
 
