@@ -31,7 +31,7 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
     {parser} are plugins in plugins/parser which parse user input by protocol and get data for poc and target, you can write yourself parser.
     """
     run_in_main = not ctx.invoked_subcommand
-    root_path = path.dirname(path.realpath(__file__))
+    root_path = path.dirname(path.realpath(path.join(__file__, '..')))
 
     if run_in_main:
         banner()
@@ -57,8 +57,6 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
         else:
             cprint(header("Base", "-", "Main breakout: %s: %s\n" %
                    (get_full_exception_name(e), str(e))))
-
-    ...
 
 
 @main.command()
