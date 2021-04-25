@@ -5,9 +5,11 @@ from queue import Queue as normal_queue, Empty
 from time import strftime
 from itertools import chain
 from threading import Thread
+from random import choice
 
 from click import UsageError
 from rich.progress import Progress, SpinnerColumn, BarColumn
+from rich._spinners import SPINNERS
 from func_timeout import func_timeout, FunctionTimedOut
 
 from glimmer.libs.core.parser import parse_path
@@ -17,6 +19,9 @@ from glimmer.libs.logger import init_logger, logger
 from glimmer.libs.core.loader import load_modules
 from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
 from glimmer.libs.core.exceptions import ModuleLoadExceptions
+
+
+SPINNER_KEYS = list(SPINNERS.keys())
 
 
 def _verify_poc(module):
@@ -60,10 +65,11 @@ def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
         return modules, msg
 
 
-def _work(tasks_queue, results_queue, timeout):
+def _work(bar, bar_task, tasks_queue, results_queue, timeout):
     while not tasks_queue.empty():
         try:
             target, poc = tasks_queue.get_nowait()
+            bar.update(bar_task, description="[cyan]working " + target)
         except Empty:
             break
         try:
@@ -96,13 +102,13 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
     results_queue = normal_queue()
     finish_tasks_num = 0
     tasks_num = tasks_queue.qsize()
-    with Progress(SpinnerColumn(), "{task.description}", BarColumn(complete_style="cyan"), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
+    with Progress(SpinnerColumn(choice(SPINNER_KEYS)), "{task.description}", BarColumn(complete_style="cyan"), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
         # create bar_task
         if not CONFIG.option.debug:
-            bar_task = bar.add_task("[cyan]testing", total=tasks_queue.qsize())
+            bar_task = bar.add_task("[cyan]working...", total=tasks_queue.qsize())
         # create futures
         tasks = [Thread(target=_work, args=(
-            tasks_queue, results_queue, timeout)) for _ in range(threads)]
+            bar, bar_task, tasks_queue, results_queue, timeout)) for _ in range(threads)]
         for task in tasks:
             task.daemon = True
             task.start()
