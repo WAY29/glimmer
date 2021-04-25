@@ -4,6 +4,7 @@ Current version: 1.3.1
 
 ## Requirements
 - rich
+- func_timeout
 - requests
 - click
 - shodan
