@@ -1,5 +1,4 @@
-from glob import glob
-from os import path, sep as SEP
+from os import path
 from pathlib import Path
 from queue import Queue as normal_queue, Empty
 from time import strftime
@@ -21,7 +20,8 @@ from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
 from glimmer.libs.core.exceptions import ModuleLoadExceptions
 
 
-SPINNER_KEYS = list(key for key in SPINNERS.keys() if key.startswith("dot") or key.startswith("grow"))
+SPINNER_KEYS = list(key for key in SPINNERS.keys()
+                    if key.startswith("dot") or key.startswith("grow"))
 
 
 def _verify_poc(module):
@@ -69,7 +69,8 @@ def _work(bar, bar_task, tasks_queue, results_queue, timeout):
     while not tasks_queue.empty():
         try:
             target, poc = tasks_queue.get_nowait()
-            bar.update(bar_task, description="[cyan]working " + target)
+            if not CONFIG.option.debug:
+                bar.update(bar_task, description="[cyan]working " + target)
         except Empty:
             break
         try:
@@ -104,8 +105,10 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
     tasks_num = tasks_queue.qsize()
     with Progress(SpinnerColumn(choice(SPINNER_KEYS)), "{task.description}", BarColumn(complete_style="cyan"), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
         # create bar_task
+        bar_task = None
         if not CONFIG.option.debug:
-            bar_task = bar.add_task("[cyan]working...", total=tasks_queue.qsize())
+            bar_task = bar.add_task(
+                "[cyan]working...", total=tasks_queue.qsize())
         # create futures
         tasks = [Thread(target=_work, args=(
             bar, bar_task, tasks_queue, results_queue, timeout)) for _ in range(threads)]
@@ -212,8 +215,8 @@ def load_pocs(pocs=[], poc_files=[], pocs_path=""):
     instances = POCS.instances
     count_dict = {}
     if not pocs and not poc_files:
-        pocs = [poc for poc in glob(
-            str(pocs_path / "**" / "*.py")) if not poc.split(SEP)[-2].startswith("_")]
+        pocs = [str(poc) for poc in pocs_path.glob(
+            '**/*.py') if not poc.parts[-2].startswith("_")]
     else:
         pocs = _load_from_links_and_files(pocs, poc_files)
     for poc in pocs:
@@ -266,8 +269,7 @@ def load_plugins(plugins_path):
                         "plugins") if not plugins_path else Path(plugins_path)
     detail_msgs = ""
     count_dict = {}
-    plugins = [plugin for plugin in glob(
-        str(plugins_path / "**" / "*.py")) if not plugin.split(SEP)[-2].startswith("_")]
+    plugins = [str(plugin) for plugin in plugins_path.glob('**/*.py') if not plugin.parts[-2].startswith("_")]
 
     for f in plugins:
         filename = path.basename(f)
