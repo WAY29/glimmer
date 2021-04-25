@@ -5,6 +5,7 @@ description = ""
 authors = [
     {name = "WAY29", email = "1162410187@qq.com"},
 ]
+readme = "README.md"
 dependencies = [
     "requests~=2.25",
     "rich~=10.0",
@@ -19,7 +20,7 @@ dynamic = ["classifiers"]
 license = {text = "MIT"}
 
 [project.urls]
-homepage = ""
+homepage = "https://github.com/WAY29/glimmer"
 
 [project.scripts]
 glimmer = "glimmer.main:main"
