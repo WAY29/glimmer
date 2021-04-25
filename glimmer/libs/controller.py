@@ -21,7 +21,7 @@ from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
 from glimmer.libs.core.exceptions import ModuleLoadExceptions
 
 
-SPINNER_KEYS = list(SPINNERS.keys())
+SPINNER_KEYS = list(key for key in SPINNERS.keys() if key.startswith("dot") or key.startswith("grow"))
 
 
 def _verify_poc(module):
