@@ -15,6 +15,26 @@ class PocBase():
     appName = ""
     appVersion = ""
 
+    def check(self, url, **kwargs):
+        return {
+            "url": url,
+            "status": -1,
+            "msg": "[red]No check func[/]",
+            "hit_urls": [],
+            "extra": {
+            }
+        }
+
+    def attack(self, url, **kwargs):
+        return {
+            "url": url,
+            "status": -1,
+            "msg": "[red]No attack func[/]",
+            "hit_urls": [],
+            "extra": {
+            }
+        }
+
     def show_info(self):
         vuln_app_info = ""
         if self.appName:

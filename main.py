@@ -14,6 +14,7 @@ from glimmer.utils import banner, cprint, header, print_traceback, get_full_exce
 @click.option("--poc", "-p", multiple=True, help="Load pocs from {parser}.")
 @click.option("--poc-file", "-pf", multiple=True, help="Load pocs from file and parse each line with {parser}.")
 @click.option("--pocs_path", help="User custom poc dir.")
+@click.option("--attack", count=True, help="set poc mode to attack mode, default is check mode.")
 @click.option("--out", "-o", default=["console", ], multiple=True, help="Use output plugins. default is console")
 @click.option("--plugins_path", help="User custom output plugin dir.")
 @click.option("--threads", type=int, help="Number of threads", default=10)
@@ -22,7 +23,7 @@ from glimmer.utils import banner, cprint, header, print_traceback, get_full_exce
 @click.option("--verbose", "-v", count=True, help="display verbose information.")
 @click.option("-vv", count=True, help="display more verbose information.")
 @click.option("--debug", count=True, help="setup debug mode.")
-def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str = "", url: str = "", file: str = "", poc=[], poc_file=[], pocs_path: str = "", out=[], plugins_path: str = "", debug: int = 0, timeout: int = 300):
+def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str = "", url: str = "", file: str = "", poc=[], poc_file=[], pocs_path: str = "", attack: int = 0, out=[], plugins_path: str = "", debug: int = 0, timeout: int = 300):
     """
     A poc framework base on python.
 
@@ -35,7 +36,7 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
     if run_in_main:
         banner()
     try:
-        init(root_path, verbose, vv, debug)
+        init(root_path, verbose, vv, debug, attack)
         load_config(config)
         load_plugins(plugins_path)
         load_pocs(poc, poc_file, pocs_path)
