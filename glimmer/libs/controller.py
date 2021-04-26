@@ -16,7 +16,7 @@ from glimmer.utils import cprint, header, CONSOLE, print_traceback
 from glimmer.libs.request import patch_request
 from glimmer.libs.logger import init_logger, logger
 from glimmer.libs.core.loader import load_modules
-from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, ConfigHandler
+from glimmer.libs.core.config import CONFIG, PLUGINS, POCS, RESULTS, ConfigHandler
 from glimmer.libs.core.exceptions import ModuleLoadExceptions
 
 
@@ -130,8 +130,14 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
                     status = poc_result.get("status", -1)
                     if status == 0:
                         logger_func = logger.info
-                    else:
+                        RESULTS.success += 1
+                    elif status == 1:
+                        logger_func = logger.warning
+                        RESULTS.failed += 1
+                    elif status == -1:
                         logger_func = logger.error
+                        RESULTS.error += 1
+
                     logger_func("_run: done poc: %s for %s" %
                                 (poc.name, target))
 
@@ -361,5 +367,6 @@ def start(threads, timeout):
 
 
 def end():
+    cprint("\n" + header("", "*", "%d [green]success[/] / %d [red]failed[/] / %d [yellow]error[/]" % (RESULTS.success, RESULTS.failed, RESULTS.error)))
     cprint("\n" + header("End", "*", "shutting down at %s" % strftime("%X")))
     ...
