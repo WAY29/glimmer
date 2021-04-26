@@ -70,6 +70,7 @@ Support parsers
 - shodan
 - zoomeye
 - fofa
+- repo
 ### file
 example: `file://./url.txt`, `files://./poc.txt`
 **if protocol is files, the result will be split by line and decode if encoded by base64, so you can generate multi targets / pocs.**
