@@ -1,6 +1,5 @@
 # Glimmer
-Current version: 1.4.1
-
+Current version: 1.5.0
 ***A poc framework base on python***
 
 ## Requirements
