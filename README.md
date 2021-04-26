@@ -1,5 +1,6 @@
 # Glimmer
 Current version: 1.4.1
+
 ***A poc framework base on python***
 
 ## Requirements
@@ -102,6 +103,10 @@ you can set fofa email and key in config
 [fofa]
 email = 
 key = 
-``` 
+```
+
+### poc repository
+[gitee/glimmer_pocs](https://gitee.com/guuest/glimmer_pocs)
+
 ## References
 [pocsuite3](https://github.com/knownsec/pocsuite3)
