@@ -29,26 +29,24 @@ Usage: main.py [OPTIONS] COMMAND [ARGS]...
 
   A poc framework base on python.
 
-  Tips: {parser} are plugins in plugins/parser which parse
-  user input by protocol and get data for poc and target, you
-  can write yourself parser.
+  Tips: {parser} are plugins in plugins/parser which parse user input by
+  protocol and get data for poc and target, you can write yourself parser.
 
 Options:
   -u, --url TEXT         Load targets from {parser}.
-  -f, --file TEXT        Load targets from file and parse each
-                         line with {parser}.
+  -f, --file TEXT        Load targets from file and parse each line with
+                         {parser}.
 
   -p, --poc TEXT         Load pocs from {parser}.
-  -pf, --poc-file TEXT   Load pocs from file and parse each
-                         line with {parser}.
+  -pf, --poc-file TEXT   Load pocs from file and parse each line with
+                         {parser}.
 
   --pocs_path TEXT       User custom poc dir.
+  --attack               set poc mode to attack mode, default is check mode.
   -o, --out TEXT         Use output plugins. default is console
   --plugins_path TEXT    User custom output plugin dir.
-  --threads INTEGER
-  -c, --config TEXT      Load config from a configuration toml
-                         file.
-
+  --threads INTEGER      Number of threads
+  -c, --config TEXT      Load config from a configuration toml file.
   -t, --timeout INTEGER  Max program runtime.
   -v, --verbose          display verbose information.
   -vv                    display more verbose information.
@@ -56,7 +54,8 @@ Options:
   --help                 Show this message and exit.
 
 Commands:
-  show-poc-info
+  search-poc     Search pocs by poc type / poc name / poc filename.
+  show-poc-info  Show poc information by poc filename.
 ```
 
 ## config
