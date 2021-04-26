@@ -27,6 +27,10 @@ POCS
     type:
         module
 
+RESULTS
+    success 0
+    failed 0
+    error 0
 """
 
 from collections import OrderedDict
@@ -110,3 +114,8 @@ POCS.instances = AttribDict()
 
 PLUGINS = AttribDict()
 PLUGINS.instances = AttribDict()
+
+RESULTS = AttribDict()
+RESULTS.success = 0
+RESULTS.failed = 0
+RESULTS.error = 0
