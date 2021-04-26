@@ -104,7 +104,13 @@ email =
 key = 
 ```
 
-### poc repository
+### repo
+example: `repo://rce/netentsec/ngfw_rce`
+
+you can load poc from offical poc repository in gitee
+
+
+## poc repository
 [gitee/glimmer_pocs](https://gitee.com/guuest/glimmer_pocs)
 
 ## References
