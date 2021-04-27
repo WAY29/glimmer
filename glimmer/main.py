@@ -45,7 +45,6 @@ def main(ctx, verbose: int = 0, vv: bool = False, threads: int = 10, config: str
     for key in option_keys:
         desired_type = type(local_vars[key])
         if key in new_options and not isinstance(new_options[key], desired_type):
-            # cprint("!!", local_vars, desired_type)
             try:
                 if desired_type in (tuple, list):
                     new_options[key] = [v.strip()
