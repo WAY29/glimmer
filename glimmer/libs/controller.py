@@ -107,7 +107,7 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
     results_queue = normal_queue()
     finish_tasks_num = 0
     tasks_num = tasks_queue.qsize()
-    with Progress(SpinnerColumn(choice(SPINNER_KEYS)), "{task.description}", BarColumn(complete_style="cyan"), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
+    with Progress(SpinnerColumn(choice(SPINNER_KEYS)), "{task.completed} / {task.total}",  BarColumn(complete_style="cyan"), " ({task.description})",  transient=True, console=CONSOLE) as bar:
         # create bar_task
         bar_task = None
         if not CONFIG.option.debug:
