@@ -140,9 +140,9 @@ example: `fofa://[email:key@]fofa.so/?q={query_str}[&max_page=1]`
 
 
 ### repo
-example: `repo://rce/netentsec/ngfw_rce`
+example: `repo://rce/netentsec/ngfw_rce`, `repo://rce/`(will load pocs from rce directory in offical repository)
 
-you can load poc from offical poc repository in gitee
+you can load poc(s) from offical poc repository in gitee
 
 
 ## poc repository
