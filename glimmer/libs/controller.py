@@ -36,10 +36,7 @@ def _verify_poc(module):
             "non-existent method: Poc.check")
 
 
-def _set_config(root_path, verbose, very_verbose, debug, attack):
-    # set root_path
-    logger.info("_set_config: set root_path")
-    CONFIG.base.root_path = Path(root_path) / "glimmer"
+def set_config(verbose, very_verbose, debug, attack):
     # set verbose flag
     logger.info("_set_config: set verbose flag")
     if very_verbose:
@@ -47,10 +44,17 @@ def _set_config(root_path, verbose, very_verbose, debug, attack):
     if debug:
         very_verbose = False
         verbose = False
+    # set CONFIG
     CONFIG.option.verbose = verbose
     CONFIG.option.very_verbose = very_verbose
     CONFIG.option.debug = debug
     POCS.type = "attack" if attack else "check"
+
+
+def _set_root_path(root_path):
+    logger.info("_set_config: set root_path")
+    CONFIG.base.root_path = Path(root_path) / "glimmer"
+    ...
 
 
 def _load_poc(poc_path, fullname=None, msgType="", verify_func=None):
@@ -103,7 +107,7 @@ def _run(threads, tasks_queue, results, timeout, output_handlers):
     results_queue = normal_queue()
     finish_tasks_num = 0
     tasks_num = tasks_queue.qsize()
-    with Progress(SpinnerColumn(choice(SPINNER_KEYS)), "{task.description}", BarColumn(complete_style="cyan"), "{task.completed} / {task.total}",  transient=True, console=CONSOLE) as bar:
+    with Progress(SpinnerColumn(choice(SPINNER_KEYS)), "{task.completed} / {task.total}",  BarColumn(complete_style="cyan"), " ({task.description})",  transient=True, console=CONSOLE) as bar:
         # create bar_task
         bar_task = None
         if not CONFIG.option.debug:
@@ -179,8 +183,11 @@ def load_config(config_path):
 
     config = ConfigHandler(config_path)
     CONFIG.base.configuration = config
-    request_config = config.request
+    request_config = config.get("request", {})
     CONFIG.base.request = request_config
+
+    options = dict(config.get("option", {}))
+    return options
 
 
 def load_targets(urls, files):
@@ -275,7 +282,8 @@ def load_plugins(plugins_path):
                         "plugins") if not plugins_path else Path(plugins_path)
     detail_msgs = ""
     count_dict = {}
-    plugins = [str(plugin) for plugin in plugins_path.glob('**/*.py') if not plugin.parts[-2].startswith("_")]
+    plugins = [str(plugin) for plugin in plugins_path.glob(
+        '**/*.py') if not plugin.parts[-2].startswith("_")]
 
     for f in plugins:
         filename = path.basename(f)
@@ -342,10 +350,10 @@ def end_plugins():
             plg.destruct()
 
 
-def init(root_path, verbose, very_verbose, debug, attack):
+def init(root_path, debug):
     init_logger(debug)
 
-    _set_config(root_path, verbose, very_verbose, debug, attack)
+    _set_root_path(root_path)
 
     patch_request()
 
@@ -354,6 +362,7 @@ def init(root_path, verbose, very_verbose, debug, attack):
 
 def start(threads, timeout):
     logger.info("start: start program")
+    CONFIG.base.start = True
     targets = CONFIG.base.targets
     tasks_queue = normal_queue()
     results = {}
@@ -367,6 +376,8 @@ def start(threads, timeout):
 
 
 def end():
-    cprint("\n" + header("", "*", "%d [green]success[/] / %d [red]failed[/] / %d [yellow]error[/]" % (RESULTS.success, RESULTS.failed, RESULTS.error)))
+    if CONFIG.base.get("start", False):
+        cprint("\n" + header("", "*", "%d [green]success[/] / %d [red]failed[/] / %d [yellow]error[/]" % (
+            RESULTS.success, RESULTS.failed, RESULTS.error)))
     cprint("\n" + header("End", "*", "shutting down at %s" % strftime("%X")))
     ...

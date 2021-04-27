@@ -8,6 +8,7 @@ CONFIG
     - request {}
     - configuration ConfigHandler
         - .xxx / .get('xxx') {}
+    - start False
     option:
     - debug 0
     - verbose 0
