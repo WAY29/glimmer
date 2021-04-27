@@ -22,8 +22,8 @@ class Plugin(PluginParserBase):
         self.client = cyberspace.FofaClient(email, key)
         if "q" not in params:
             raise ParserExceptions.CyberSpace.Base("Missing query params: q")
-        query_str = parse.unquote_plus(params["q"][0])
-        max_page = int(parse.unquote_plus(params["max_page"][0])) if "max_page" in params else 1
+        query_str = params["q"][0]
+        max_page = int(params["max_page"][0]) if "max_page" in params else 1
         fields = "ip,port,domain"
         data = []
         for result in self.client.query(query_str, max_page, fields):

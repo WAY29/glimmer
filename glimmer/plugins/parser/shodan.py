@@ -20,10 +20,10 @@ class Plugin(PluginParserBase):
         self.client = cyberspace.ShodanClient(key)
         if "q" not in params:
             raise ParserExceptions.CyberSpace.Base("Missing query params: q")
-        query_str = parse.unquote_plus(params["q"][0])
-        max_page = int(parse.unquote_plus(
-            params["max_page"][0])) if "max_page" in params else 1
-        limit = parse.unquote_plus(params["limit"][0]) if "limit" in params else 1
+        query_str = params["q"][0]
+        max_page = int(
+            params["max_page"][0]) if "max_page" in params else 1
+        limit = params["limit"][0] if "limit" in params else 1
         fields = "ip,port,domains"
         data = []
         for ip, port, domains in self.client.query(query_str, max_page, limit, fields):
