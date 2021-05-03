@@ -69,8 +69,8 @@ User-Agent = Glimmer
 ;PHPSESSID = 
 
 ;[request.proxies]
-; http_proxy = 
-; https_proxy = 
+; http = 
+; https = 
 
 [shodan]
 key = 
@@ -124,7 +124,7 @@ example: `file://./url.txt`, `files://./poc.txt`
 **if protocol is files, the result will be split by line and decode if encoded by base64, so you can generate multi targets / pocs.**
 
 ### url
-example: `http://localhost`, `https://baidu.com`
+example: `https://example.com`, `http://127.0.0.1/poc.py`
 
 ### python
 example: `python://./poc.py`, `pythons://./targets.py`
