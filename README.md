@@ -12,6 +12,7 @@ Current version: 1.7.1
 - zoomeye
 
 ## Install
+### common
 ```bash
 pip3 install -U python-glimmer
 glimmer --help
@@ -22,6 +23,18 @@ git clone https://github.com/WAY29/glimmer.git
 cd glimmer
 python3 -m pip install -r requirements.txt
 python3 glimmer/main.py --help
+```
+### docker
+```bash
+# start a glimmer docker
+docker run --name glimmer -itd longlone/glimmer
+# exec bash from docker 
+docker exec -it glimmer bash
+# in docker, run glimmer
+glimmer --help
+
+# or just use glimmer directly
+docker run --rm -it longlone/glimmer:cli --help
 ```
 
 ## Usage
