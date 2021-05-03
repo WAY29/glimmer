@@ -1,5 +1,4 @@
 from os import path
-
 import click
 
 from glimmer.libs.controller import init, init_output_plugins, load_plugins, load_pocs, load_targets, start, load_config, set_config, end, init_plugins, enable_plugins, end_plugins
