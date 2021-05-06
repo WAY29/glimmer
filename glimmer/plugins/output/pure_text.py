@@ -3,7 +3,7 @@ from glimmer.api import PluginOutputBase, register_plugin, cprint, header
 
 class Plugin(PluginOutputBase):
     def construct(self):
-        self._handler = open("pure_result.txt", "w+")
+        self._handler = open("pure_result.txt", "a+")
 
     def handle(self, poc, result, **kwargs):
         status = result.get('status', -1)
