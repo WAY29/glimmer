@@ -101,11 +101,15 @@ Support parsers
 - repo
 ### file
 example: `file://./url.txt`, `files://./poc.txt`
+
 **if protocol is files, the result will be split by line and decode if encoded by base64, so you can generate multi targets / pocs.**
 ### url
 example: `http://localhost`, `https://baidu.com`
 ### python
 example: `python://./poc.py`, `pythons://./targets.py`
+
+load pocs / targets from python, it will be executed in python and get stdout as pocs / targets
+
 **if protocol is pythons, the result will be split by line and decode if encoded by base64, so you can generate multi targets / pocs.**
 ### shodan
 example: `shodan://[key@]shodan.io/?q={query_str}[&max_page=1&limit=0]`
