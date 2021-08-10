@@ -9,7 +9,7 @@ class Plugin(PluginParserBase):
 
     def get_data(self, module_path):
         try:
-            res = requests.get(module_path)
+            res = requests.get(module_path, verify=False)
             return (res.text, )
         except Exception:
             return ()
