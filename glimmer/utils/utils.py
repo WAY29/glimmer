@@ -6,7 +6,7 @@ import sys
 from base64 import b64decode, b64encode
 
 ERROR_INVALID_NAME = 123
-__version__ = "1.7.2"
+__version__ = "1.7.3"
 
 
 def banner():
