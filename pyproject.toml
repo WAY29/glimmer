@@ -14,7 +14,6 @@ dependencies = [
     "shodan~=1.25",
     "func-timeout~=4.3",
 ]
-dev-dependencies = []
 requires-python = ">=3.6"
 dynamic = ["classifiers"]
 license = {text = "MIT"}
