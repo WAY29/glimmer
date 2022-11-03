@@ -10,7 +10,7 @@ class FofaClient:
     def __init__(self, email, key):
         self.email = email
         self.key = key
-        self.base_url = "https://fofa.so"
+        self.base_url = "https://fofa.info"
         self.search_api_url = "/api/v1/search/all"
         self.login_api_url = "/api/v1/info/my"
         self.get_userinfo()  # check email and key
